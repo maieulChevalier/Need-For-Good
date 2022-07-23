@@ -1,5 +1,31 @@
+<script setup>
+import { ref, onMounted } from "vue";
+import Typed from "typed.js";
+
+const options = {
+  strings: ["PROBLEM SOLVER", "FAST LEARNER", "ALTRUISTE"],
+  typeSpeed: 80,
+  backSpeed: 80,
+  smartBackspace: true,
+  loop: true,
+  showCursor: true,
+};
+
+// const element = ref("");
+const welcomeMessage = ref(null);
+
+onMounted(() => {
+  const typed = new Typed(welcomeMessage.value, options);
+});
+</script>
+
 <template>
   <v-row>
+    <v-col class="text-center">
+      <img src="/v.png" alt="Vuetify.js" class="mb-5" />
+      <p><span ref="welcomeMessage"></span></p>
+    </v-col>
+    <v-divider vertical></v-divider>
     <v-col class="text-center">
       <img src="/v.png" alt="Vuetify.js" class="mb-5" />
       <blockquote class="blockquote">
@@ -13,6 +39,12 @@
     </v-col>
   </v-row>
 </template>
+
+<style>
+.element {
+  color: red;
+}
+</style>
 
 <script>
 export default {
