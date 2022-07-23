@@ -1,43 +1,25 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import Typed from "typed.js";
+import CustomTypedJS from "../components/CustomTypedJS.vue";
 
-const options = {
-  strings: ["PROBLEM SOLVER", "FAST LEARNER", "ALTRUISTE"],
-  typeSpeed: 80,
-  backSpeed: 80,
-  smartBackspace: true,
-  loop: true,
-  showCursor: true,
-};
-
-// const element = ref("");
-const welcomeMessage = ref(null);
-
-onMounted(() => {
-  const typed = new Typed(welcomeMessage.value, options);
-});
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 </script>
 
 <template>
-  <v-row>
-    <v-col class="text-center">
-      <img src="/v.png" alt="Vuetify.js" class="mb-5" />
-      <p><span ref="welcomeMessage"></span></p>
-    </v-col>
-    <v-divider vertical></v-divider>
-    <v-col class="text-center">
-      <img src="/v.png" alt="Vuetify.js" class="mb-5" />
-      <blockquote class="blockquote">
-        &#8220;First, solve the problem. Then, write the code.&#8221;
-        <footer>
-          <small>
-            <em>&mdash;John Johnson</em>
-          </small>
-        </footer>
-      </blockquote>
-    </v-col>
-  </v-row>
+  <div>
+    <CustomTypedJS
+      msg="Bonjour l'artiste ! Nous avons besoin de toi pour apprendre à notre IA à coder dans les règles de l'art. ^1000 <br> Pour ce faire, nous avons créé un jeu où il te faudra battre notre IA dans une compétition acharnée pour terminer un programme avant elle. ^1000 <br> Mais Attention ! Il faut que le code soit impéccable ! Car coder vite, c'est bien... Mais coder bien, c'est mieux ! ^1000 Nous ne voudrions pas que notre IA se mette à coder n'importe quoi ! ^1000 <br> Tu es partant ? Super ! Voici les commandes qui te permettront d'écrire le programme : ^1000 <br> <u>{code: bien}</u>  ^1000 <br> <u>{code: vite}</u>  ^1000 <br> <u>{DEBUG}</u> ^1000 <br> <br> Tu n'as plus qu'à cliquer sur START une fois que tu es prêt(e)."
+    />
+    <v-btn elevation="9" x-large color="primary" :to="'/interface'"
+      >START</v-btn
+    >
+  </div>
 </template>
 
 <script>

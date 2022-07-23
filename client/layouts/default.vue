@@ -54,7 +54,7 @@ export default {
       items: [
         {
           icon: "mdi-apps",
-          title: "À l'aide !",
+          title: "Accueil",
           to: "/",
         },
         {
