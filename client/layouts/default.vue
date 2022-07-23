@@ -26,7 +26,7 @@
     </v-navigation-drawer>
     <v-app-bar :color="'transparent'" :clipped-left="clipped" :elevation="0">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn icon @click.stop="miniVariant = !miniVariant">
+      <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
       </v-btn>
       <v-btn icon @click.stop="clipped = !clipped">
@@ -36,16 +36,16 @@
         <v-icon>mdi-minus</v-icon>
       </v-btn>
       <v-toolbar-title v-text="title" />
-      <v-spacer />
+      <v-spacer /> -->
     </v-app-bar>
     <v-main>
       <v-container>
         <Nuxt />
       </v-container>
     </v-main>
-    <v-footer :absolute="!fixed" app>
+    <!-- <v-footer :color="'transparent'" :absolute="!fixed" app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
+    </v-footer> -->
   </v-app>
 </template>
 
@@ -54,9 +54,9 @@ export default {
   name: "DefaultLayout",
   data() {
     return {
-      clipped: false,
+      // clipped: false,
       drawer: false,
-      fixed: false,
+      // fixed: false,
       items: [
         {
           icon: "mdi-apps",
@@ -69,9 +69,9 @@ export default {
           to: "/inspire",
         },
       ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
+      // miniVariant: false,
+      // right: true,
+      // rightDrawer: false,
       title: "Vuetify.js",
     };
   },
