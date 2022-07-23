@@ -40,15 +40,9 @@ onMounted(() => {
   </v-row>
 </template>
 
-<style>
-.element {
-  color: red;
-}
-</style>
-
 <script>
 export default {
-  name: "WelcomePage",
+  name: "HelpPage",
 };
 </script>
 

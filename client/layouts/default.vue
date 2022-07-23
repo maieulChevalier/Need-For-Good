@@ -18,7 +18,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :color="'transparent'" :elevation="0">
+    <v-app-bar :color="'transparent'" :elevation="0" app>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
@@ -54,13 +54,13 @@ export default {
       items: [
         {
           icon: "mdi-apps",
-          title: "Welcome",
+          title: "À l'aide !",
           to: "/",
         },
         {
           icon: "mdi-chart-bubble",
-          title: "Inspire",
-          to: "/inspire",
+          title: "Interface",
+          to: "/interface",
         },
       ],
       // miniVariant: false,
