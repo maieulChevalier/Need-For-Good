@@ -4,6 +4,7 @@ import Typed from "typed.js";
 import { minMaxRandomNumber } from "../helpers/minMaxRandomNumber";
 
 const props = defineProps({
+  userInput: String,
   msg: String,
   typeSpeed: {
     default: 20,
@@ -28,9 +29,20 @@ const options = {
     function stop() {
       self.stop();
     }
-    setTimeout(stop, props.typeSpeed * minMaxRandomNumber(10, 20));
+    console.log("userInput", props.userInput);
+    if (props.userInput === "codeCarefully()") {
+      setTimeout(stop, props.typeSpeed * minMaxRandomNumber(10, 20));
+    }
+    if (props.userInput === "codeQuickly()") {
+      setTimeout(stop, props.typeSpeed * minMaxRandomNumber(60, 80));
+    }
+    if (props.userInput === "debug()") {
+      setTimeout(stop, props.typeSpeed * minMaxRandomNumber(5, 10));
+    }
   },
 };
+
+// function codeCarefully() {}
 
 onMounted(() => {
   typing = new Typed(element.value, options);

@@ -8,9 +8,8 @@ import { ref, onMounted } from "vue";
 import CustomTypedJS from "../components/CustomTypedJS.vue";
 
 const userInput = ref("");
-// const toggle = ref();
-// const action = ref("");
 const typedByUserRef = ref();
+const typedByComputerRef = ref();
 
 onMounted(() => {
   // multiply();
@@ -24,18 +23,7 @@ const rules = {
     "Only letters and parenthesis are accepted",
 };
 
-// function limit(e) {
-//   console.log("userInput: ", userInput.value);
-
-//   if (userInput.length < 16) {
-//     userInput.value = e.target.value;
-//   }
-//   if (userInput.length > 16) {
-//     userInput = userInput.slice(0, 16);
-//   }
-// }
-
-function submit() {
+async function submit() {
   if (
     rules.maxLength(userInput.value) !== true ||
     rules.characters(userInput.value) !== true
@@ -48,10 +36,12 @@ function submit() {
     userInput.value === "codeQuickly()" ||
     userInput.value === "debug()"
   ) {
-    typedByUserRef.value.toggleTyping();
+    await typedByUserRef.value.toggleTyping();
   } else {
-    alert("commande invalide");
+    alert("ERREUR");
   }
+
+  userInput.value = "";
 
   console.log("maxLength: ", rules.maxLength(userInput.value) !== true);
   console.log("characters: ", rules.characters(userInput.value) !== true);
@@ -61,7 +51,6 @@ function submit() {
 <template>
   <div>
     <v-container class="ma-1 d-flex justify-space-between">
-      <!-- <v-form ref="form" v-model="valid" lazy-validation> -->
       <v-text-field
         label="Code"
         placeholder="ex: codeFast()"
@@ -75,8 +64,6 @@ function submit() {
         @keyup.enter="submit"
       >
       </v-text-field>
-      <!-- </v-form> -->
-
       <v-btn elevation="9" x-large color="primary" :to="'/interface'">
         RESET
       </v-btn>
@@ -95,13 +82,14 @@ function submit() {
           <v-progress-linear
             background-color="red lighten-2"
             color="green lighten-2"
-            value="15"
-            buffer-value="30"
+            value="5"
+            buffer-value="5"
             stream
           ></v-progress-linear>
           <br />
           <CustomTypedJS
             :msg="'function multiply() {<br/> &nbsp;&nbsp;&nbsp; const a = prompt() <br/> &nbsp;&nbsp;&nbsp; const b = prompt() <br/> &nbsp;&nbsp;&nbsp; return alert(a * b); <br/> }; <br/> <br/> multiply();'"
+            :userInput="userInput"
             ref="typedByUserRef"
           />
           <blockquote class="blockquote">
@@ -124,13 +112,14 @@ function submit() {
           <br />
           <v-progress-linear
             color="green lighten-2"
-            value="15"
+            value="5"
             buffer-value="0"
             stream
           ></v-progress-linear>
           <br />
           <CustomTypedJS
             msg="function multiply() {<br/> &nbsp;&nbsp;&nbsp; const a = prompt() <br/> &nbsp;&nbsp;&nbsp; const b = prompt() <br/> &nbsp;&nbsp;&nbsp; return alert(a * b); <br/> } <br/> <br/> multiply()"
+            ref="typedByComputerRef"
           />
           <blockquote class="blockquote">
             "Coder vite c'est bien... Mais coder bien, c'est mieux !"
