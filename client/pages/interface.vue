@@ -14,31 +14,26 @@ function multiply() {
   return alert(a * b);
 }
 
+function codeCarefully() {}
 onMounted(() => {
   // multiply();
 });
 </script>
 <template>
   <div>
-    <v-container class="ma-1">
-      <v-row class="align-center">
-        <v-column>
-          <v-text-field
-            label="Code"
-            placeholder="{code: vite}"
-            outlined
-            hide-details="auto"
-            style="max-width: 200px; margin-right: 20px"
-          ></v-text-field>
-        </v-column>
+    <v-container class="ma-1 d-flex justify-space-between">
+      <v-text-field
+        label="Code"
+        placeholder="ex: codeFast()"
+        outlined
+        hide-details="auto"
+        style="max-width: 200px; margin-right: 20px"
+        hint="Appuies sur Entrée pour valider"
+      ></v-text-field>
 
-        <v-column>
-          <v-btn elevation="9" x-large color="primary" :to="'/interface'">
-            RESET
-          </v-btn></v-column
-        >
-      </v-row>
-      <v-row class="align-center"> </v-row>
+      <v-btn elevation="9" x-large color="primary" :to="'/interface'">
+        RESET
+      </v-btn>
     </v-container>
 
     <br />
@@ -46,7 +41,9 @@ onMounted(() => {
     <v-row>
       <v-col>
         <v-container>
-          <v-icon x-large>mdi-tooltip-account</v-icon>
+          <v-icon x-large class="d-flex justify-center"
+            >mdi-tooltip-account
+          </v-icon>
           <br />
           <br />
           <v-progress-linear
@@ -64,7 +61,7 @@ onMounted(() => {
             "Coder vite c'est bien... Mais coder bien, c'est mieux !"
             <footer>
               <small>
-                <em>&mdash;John Johnson</em>
+                <em>&mdash;Foger</em>
               </small>
             </footer>
           </blockquote>
@@ -73,7 +70,9 @@ onMounted(() => {
       <v-divider vertical color="white"></v-divider>
       <v-col>
         <v-container>
-          <v-icon x-large>mdi-robot-happy-outline</v-icon>
+          <v-icon x-large class="d-flex justify-center"
+            >mdi-robot-happy-outline
+          </v-icon>
           <br />
           <br />
           <v-progress-linear
@@ -90,7 +89,7 @@ onMounted(() => {
             "Coder vite c'est bien... Mais coder bien, c'est mieux !"
             <footer>
               <small>
-                <em>&mdash;John Johnson</em>
+                <em>&mdash;Foger</em>
               </small>
             </footer>
           </blockquote>

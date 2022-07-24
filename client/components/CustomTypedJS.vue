@@ -17,17 +17,29 @@ const props = defineProps({
 const options = {
   strings: [props.msg],
   typeSpeed: props.typeSpeed,
+  onBegin: (self) => {
+    self.toggle();
+  },
 };
 
 const element = ref(null);
+let typing = ref(null);
+
+function hello() {
+  typing.toggle();
+}
 
 onMounted(() => {
-  const typed = new Typed(element.value, options);
+  typing = new Typed(element.value, options);
+  // const typingRef = ref(typing);
 });
 </script>
 
 <template>
-  <p><span ref="element"></span></p>
+  <div>
+    <p><span ref="element"></span></p>
+    <v-btn @click="hello" color="primary">toggle</v-btn>
+  </div>
 </template>
 
 <script>
