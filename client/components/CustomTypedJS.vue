@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import Typed from "typed.js";
 import { minMaxRandomNumber } from "../helpers/minMaxRandomNumber";
 
@@ -15,6 +15,9 @@ const props = defineProps({
   },
 });
 
+const element = ref();
+let typing = ref();
+
 const options = {
   strings: [props.msg],
   typeSpeed: props.typeSpeed,
@@ -29,11 +32,6 @@ const options = {
   },
 };
 
-// console.log("typerandom", props.typeSpeed);
-
-const element = ref();
-let typing = ref();
-
 onMounted(() => {
   typing = new Typed(element.value, options);
 });
@@ -41,12 +39,16 @@ onMounted(() => {
 function toggleTyping() {
   typing.start();
 }
+
+defineExpose({
+  toggleTyping,
+});
 </script>
 
 <template>
   <div>
     <p><span ref="element"></span></p>
-    <v-btn @click="toggleTyping" color="primary">toggle</v-btn>
+    <!-- <v-btn @click="toggleTyping()" color="primary">toggle</v-btn> -->
   </div>
 </template>
 

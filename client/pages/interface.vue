@@ -8,6 +8,13 @@ import { ref, onMounted } from "vue";
 import CustomTypedJS from "../components/CustomTypedJS.vue";
 
 const userInput = ref("");
+// const toggle = ref();
+// const action = ref("");
+const typedByUserRef = ref();
+
+onMounted(() => {
+  // multiply();
+});
 
 const rules = {
   maxLength: (value) => value.length <= 20 || "Max 20 characters",
@@ -29,18 +36,27 @@ const rules = {
 // }
 
 function submit() {
-  if (rules.maxLength(userInput.value) || rules.characters(userInput.value)) {
+  if (
+    rules.maxLength(userInput.value) !== true ||
+    rules.characters(userInput.value) !== true
+  ) {
     return;
   }
 
-  console.log("maxLength: ", rules.maxLength(userInput.value));
+  if (
+    userInput.value === "codeCarefully()" ||
+    userInput.value === "codeQuickly()" ||
+    userInput.value === "debug()"
+  ) {
+    typedByUserRef.value.toggleTyping();
+  } else {
+    alert("commande invalide");
+  }
 
+  console.log("maxLength: ", rules.maxLength(userInput.value) !== true);
+  console.log("characters: ", rules.characters(userInput.value) !== true);
   console.log("userInput: ", userInput.value);
 }
-
-onMounted(() => {
-  // multiply();
-});
 </script>
 <template>
   <div>
@@ -85,7 +101,8 @@ onMounted(() => {
           ></v-progress-linear>
           <br />
           <CustomTypedJS
-            msg="function multiply() {<br/> &nbsp;&nbsp;&nbsp; const a = prompt() <br/> &nbsp;&nbsp;&nbsp; const b = prompt() <br/> &nbsp;&nbsp;&nbsp; return alert(a * b); <br/> }; <br/> <br/> multiply();"
+            :msg="'function multiply() {<br/> &nbsp;&nbsp;&nbsp; const a = prompt() <br/> &nbsp;&nbsp;&nbsp; const b = prompt() <br/> &nbsp;&nbsp;&nbsp; return alert(a * b); <br/> }; <br/> <br/> multiply();'"
+            ref="typedByUserRef"
           />
           <blockquote class="blockquote">
             "Coder vite c'est bien... Mais coder bien, c'est mieux !"
