@@ -1,20 +1,43 @@
 <script setup>
-import { onMounted } from "vue";
-
-import CustomTypedJS from "../components/CustomTypedJS.vue";
-
 // Ajouter les 4 actions
 // Ajouter couleurs au code "écrit" par l'utilisateur et l'IA
 // Protéger le TextField
 // Écrire les tests
 
-function multiply() {
-  const a = prompt();
-  const b = prompt();
-  return alert(a * b);
+import { ref, onMounted } from "vue";
+import CustomTypedJS from "../components/CustomTypedJS.vue";
+
+const userInput = ref("");
+
+const rules = {
+  maxLength: (value) => value.length <= 20 || "Max 20 characters",
+
+  characters: (value) =>
+    !!(value || "").match(/^[a-zA-Z-()]*$/) ||
+    "Only letters and parenthesis are accepted",
+};
+
+// function limit(e) {
+//   console.log("userInput: ", userInput.value);
+
+//   if (userInput.length < 16) {
+//     userInput.value = e.target.value;
+//   }
+//   if (userInput.length > 16) {
+//     userInput = userInput.slice(0, 16);
+//   }
+// }
+
+function submit() {
+  if (rules.maxLength(userInput.value) || rules.characters(userInput.value)) {
+    return;
+  }
+
+  console.log("maxLength: ", rules.maxLength(userInput.value));
+
+  console.log("userInput: ", userInput.value);
 }
 
-function codeCarefully() {}
 onMounted(() => {
   // multiply();
 });
@@ -22,6 +45,7 @@ onMounted(() => {
 <template>
   <div>
     <v-container class="ma-1 d-flex justify-space-between">
+      <!-- <v-form ref="form" v-model="valid" lazy-validation> -->
       <v-text-field
         label="Code"
         placeholder="ex: codeFast()"
@@ -29,7 +53,13 @@ onMounted(() => {
         hide-details="auto"
         style="max-width: 200px; margin-right: 20px"
         hint="Appuies sur Entrée pour valider"
-      ></v-text-field>
+        maxlength="20"
+        :rules="[rules.characters, rules.maxLength]"
+        v-model="userInput"
+        @keyup.enter="submit"
+      >
+      </v-text-field>
+      <!-- </v-form> -->
 
       <v-btn elevation="9" x-large color="primary" :to="'/interface'">
         RESET
@@ -42,7 +72,7 @@ onMounted(() => {
       <v-col>
         <v-container>
           <v-icon x-large class="d-flex justify-center"
-            >mdi-tooltip-account
+            >mdi-human-child
           </v-icon>
           <br />
           <br />
@@ -55,7 +85,7 @@ onMounted(() => {
           ></v-progress-linear>
           <br />
           <CustomTypedJS
-            msg="function multiply() {<br/> &nbsp;&nbsp;&nbsp; const a = prompt() <br/> &nbsp;&nbsp;&nbsp; const b = prompt() <br/> &nbsp;&nbsp;&nbsp; return alert(a * b); <br/> } <br/> <br/> multiply()"
+            msg="function multiply() {<br/> &nbsp;&nbsp;&nbsp; const a = prompt() <br/> &nbsp;&nbsp;&nbsp; const b = prompt() <br/> &nbsp;&nbsp;&nbsp; return alert(a * b); <br/> }; <br/> <br/> multiply();"
           />
           <blockquote class="blockquote">
             "Coder vite c'est bien... Mais coder bien, c'est mieux !"

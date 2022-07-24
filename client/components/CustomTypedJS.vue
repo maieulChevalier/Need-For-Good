@@ -1,11 +1,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import Typed from "typed.js";
+import { minMaxRandomNumber } from "../helpers/minMaxRandomNumber";
 
 const props = defineProps({
   msg: String,
   typeSpeed: {
-    default: 1,
+    default: 20,
     type: Number,
   },
   showCursor: {
@@ -18,27 +19,34 @@ const options = {
   strings: [props.msg],
   typeSpeed: props.typeSpeed,
   onBegin: (self) => {
-    self.toggle();
+    self.stop();
+  },
+  onStart: (pos, self) => {
+    function stop() {
+      self.stop();
+    }
+    setTimeout(stop, props.typeSpeed * minMaxRandomNumber(10, 20));
   },
 };
 
-const element = ref(null);
-let typing = ref(null);
+// console.log("typerandom", props.typeSpeed);
 
-function hello() {
-  typing.toggle();
-}
+const element = ref();
+let typing = ref();
 
 onMounted(() => {
   typing = new Typed(element.value, options);
-  // const typingRef = ref(typing);
 });
+
+function toggleTyping() {
+  typing.start();
+}
 </script>
 
 <template>
   <div>
     <p><span ref="element"></span></p>
-    <v-btn @click="hello" color="primary">toggle</v-btn>
+    <v-btn @click="toggleTyping" color="primary">toggle</v-btn>
   </div>
 </template>
 
