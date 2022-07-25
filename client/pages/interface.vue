@@ -5,25 +5,97 @@
 // Écrire les tests
 
 import { ref, onMounted } from "vue";
-import CustomTypedJS from "../components/CustomTypedJS.vue";
+import ComputerSide from "../components/ComputerSide.vue";
+import Typewriter from "typewriter-effect/dist/core";
+
+import { minMaxRandomNumber } from "../helpers/minMaxRandomNumber";
 
 const userInput = ref("");
-const typedByUserRef = ref();
-const typedByComputerRef = ref();
+const typewriterRef = ref();
+let typewriter = ref();
+const linesToCode = [
+  "function multiply() {<br>",
+  "\xa0\xa0\xa0const a = prompt(); <br>",
+  " \xa0\xa0\xa0const b = prompt(); <br>",
+  " \xa0\xa0\xa0return alert(a * b) <br>",
+  "};<br>",
+  "multiply();",
+];
+let whichLineCounter = 0;
+
+function separateString(str, n) {
+  let arr = [];
+  for (let i = 0; i < str.length; i += n) {
+    arr.push(str.substr(i, n));
+  }
+  return arr;
+}
+
+function insertBugs(str, randomNumber) {
+  const parts = separateString(str, randomNumber);
+  const newValue = parts.join(",");
+  return newValue;
+}
+
+function insertManyBugs(pos) {
+  linesToCode[pos] = insertBugs(linesToCode[pos], minMaxRandomNumber(5, 10));
+}
 
 onMounted(() => {
-  // multiply();
+  typewriter = new Typewriter(typewriterRef.value, {
+    delay: 30,
+  });
 });
 
 const rules = {
   maxLength: (value) => value.length <= 20 || "Max 20 characters",
-
   characters: (value) =>
-    !!(value || "").match(/^[a-zA-Z-()]*$/) ||
-    "Only letters and parenthesis are accepted",
+    !!(value || "").match(/^[a-zA-Z-()]*$/) || "Caractères non valides",
 };
 
-async function submit() {
+function codeCarefully() {
+  linesToCode[whichLineCounter] = insertBugs(
+    linesToCode[whichLineCounter],
+    minMaxRandomNumber(10, 20)
+  );
+  typewriter.typeString(linesToCode[whichLineCounter]).start();
+  whichLineCounter++;
+}
+
+function codeQuickly() {
+  if (whichLineCounter <= 4) {
+    insertManyBugs(whichLineCounter);
+    insertManyBugs(whichLineCounter + 1);
+    typewriter
+      .typeString(
+        linesToCode[whichLineCounter] + linesToCode[whichLineCounter + 1]
+      )
+      .start();
+    whichLineCounter = whichLineCounter + 2;
+  } else {
+    insertManyBugs(whichLineCounter);
+    typewriter.typeString(linesToCode[whichLineCounter]).start();
+    whichLineCounter = whichLineCounter + 1;
+  }
+}
+
+function debug() {
+  linesToCode.forEach((el, index) => {
+    const times = minMaxRandomNumber(1, 4);
+    for (let i = 0; i < times; i++) {
+      el = el.replace(",", "");
+    }
+    linesToCode[index] = el;
+    return el;
+  });
+
+  typewriter
+    .deleteAll(2)
+    .typeString(linesToCode.filter((_, i) => i < whichLineCounter).join(""))
+    .start();
+}
+
+function submit() {
   if (
     rules.maxLength(userInput.value) !== true ||
     rules.characters(userInput.value) !== true
@@ -31,23 +103,20 @@ async function submit() {
     return;
   }
 
-  if (
-    userInput.value === "codeCarefully()" ||
-    userInput.value === "codeQuickly()" ||
-    userInput.value === "debug()"
-  ) {
-    await typedByUserRef.value.toggleTyping();
+  if (userInput.value === "codeCarefully()") {
+    codeCarefully();
+  } else if (userInput.value === "codeQuickly()") {
+    codeQuickly();
+  } else if (userInput.value === "debug()") {
+    debug();
   } else {
-    alert("ERREUR");
+    alert("commande invalide");
   }
 
   userInput.value = "";
-
-  console.log("maxLength: ", rules.maxLength(userInput.value) !== true);
-  console.log("characters: ", rules.characters(userInput.value) !== true);
-  console.log("userInput: ", userInput.value);
 }
 </script>
+
 <template>
   <div>
     <v-container class="ma-1 d-flex justify-space-between">
@@ -55,7 +124,6 @@ async function submit() {
         label="Code"
         placeholder="ex: codeFast()"
         outlined
-        hide-details="auto"
         style="max-width: 200px; margin-right: 20px"
         hint="Appuies sur Entrée pour valider"
         maxlength="20"
@@ -87,11 +155,7 @@ async function submit() {
             stream
           ></v-progress-linear>
           <br />
-          <CustomTypedJS
-            :msg="'function multiply() {<br/> &nbsp;&nbsp;&nbsp; const a = prompt() <br/> &nbsp;&nbsp;&nbsp; const b = prompt() <br/> &nbsp;&nbsp;&nbsp; return alert(a * b); <br/> }; <br/> <br/> multiply();'"
-            :userInput="userInput"
-            ref="typedByUserRef"
-          />
+          <p><span ref="typewriterRef"></span></p>
           <blockquote class="blockquote">
             "Coder vite c'est bien... Mais coder bien, c'est mieux !"
             <footer>
@@ -104,32 +168,7 @@ async function submit() {
       </v-col>
       <v-divider vertical color="white"></v-divider>
       <v-col>
-        <v-container>
-          <v-icon x-large class="d-flex justify-center"
-            >mdi-robot-happy-outline
-          </v-icon>
-          <br />
-          <br />
-          <v-progress-linear
-            color="green lighten-2"
-            value="5"
-            buffer-value="0"
-            stream
-          ></v-progress-linear>
-          <br />
-          <CustomTypedJS
-            msg="function multiply() {<br/> &nbsp;&nbsp;&nbsp; const a = prompt() <br/> &nbsp;&nbsp;&nbsp; const b = prompt() <br/> &nbsp;&nbsp;&nbsp; return alert(a * b); <br/> } <br/> <br/> multiply()"
-            ref="typedByComputerRef"
-          />
-          <blockquote class="blockquote">
-            "Coder vite c'est bien... Mais coder bien, c'est mieux !"
-            <footer>
-              <small>
-                <em>&mdash;Foger</em>
-              </small>
-            </footer>
-          </blockquote>
-        </v-container>
+        <ComputerSide />
       </v-col>
     </v-row>
   </div>
