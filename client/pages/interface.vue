@@ -10,6 +10,8 @@ import Typewriter from "typewriter-effect/dist/core";
 
 import { minMaxRandomNumber } from "../helpers/minMaxRandomNumber";
 
+import { robotProgressionRate } from "../customStore/customStore.js";
+
 const userInput = ref("");
 const typewriterRef = ref();
 let typewriter = ref();
@@ -25,6 +27,8 @@ let whichLineCounter = 0;
 const progressionRate = ref(0);
 let numberOfBugs = 0;
 const bugsRate = ref(0);
+
+const computerSideRef = ref();
 
 onMounted(() => {
   typewriter = new Typewriter(typewriterRef.value, {
@@ -62,18 +66,22 @@ function updateProgress(totalLinesToComplete) {
 }
 
 function codeCarefully() {
-  if (whichLineCounter > 5) {
+  if (whichLineCounter >= linesToCode.length) {
     alert("Il faut débugger ton code!");
     return;
   }
   insertSomeBugs(whichLineCounter);
   typewriter.typeString(linesToCode[whichLineCounter]).start();
-  updateProgress(6);
+  updateProgress(linesToCode.length);
   whichLineCounter++;
 }
 
 function codeQuickly() {
-  if (whichLineCounter <= 4) {
+  if (whichLineCounter >= linesToCode.length) {
+    alert("Il faut débugger ton code!");
+    return;
+  }
+  if (whichLineCounter % 2 === linesToCode.length % 2) {
     insertManyBugs(whichLineCounter);
     insertManyBugs(whichLineCounter + 1);
     typewriter
@@ -81,17 +89,14 @@ function codeQuickly() {
         linesToCode[whichLineCounter] + linesToCode[whichLineCounter + 1]
       )
       .start();
-    updateProgress(3);
+    updateProgress(linesToCode.length / 2);
     whichLineCounter++;
-    whichLineCounter++;
-  } else if (whichLineCounter === 5) {
-    insertManyBugs(whichLineCounter);
-    typewriter.typeString(linesToCode[whichLineCounter]).start();
-    updateProgress(6);
     whichLineCounter++;
   } else {
-    alert("Il faut débugger ton code!");
-    return;
+    insertManyBugs(whichLineCounter);
+    typewriter.typeString(linesToCode[whichLineCounter]).start();
+    updateProgress(linesToCode.length);
+    whichLineCounter++;
   }
 }
 
@@ -116,8 +121,9 @@ function debug() {
       .filter((_, i) => i < whichLineCounter)
       .join("")
       .split(",").length - 1;
-  progressionRate.value = (100 / 6) * whichLineCounter - numberOfBugs;
-  bugsRate.value = (100 / 6) * whichLineCounter;
+  progressionRate.value =
+    (100 / linesToCode.length) * whichLineCounter - numberOfBugs;
+  bugsRate.value = (100 / linesToCode.length) * whichLineCounter;
   console.log(
     " progressionRate.value",
     progressionRate.value,
@@ -156,11 +162,18 @@ function submit() {
     alert("commande invalide");
   }
 
-  if (progressionRate.value === 100) {
-    alert(
-      "Bravoooo 🙌✊🥳🎉👏 Tu as codé une calculette capable de multiplier !"
-    );
+  computerSideRef.value.robotCode();
+
+  if (progressionRate.value >= 100 && robotProgressionRate.value < 100) {
+    alert("Bravoooo 🙌✊🥳🎉👏 Tu as gagné la compétition !");
     multiply();
+  } else if (progressionRate.value < 100 && robotProgressionRate.value >= 100) {
+    alert("Je t'ai batu ! 😋");
+  } else if (
+    progressionRate.value === 100 &&
+    robotProgressionRate.value === 100
+  ) {
+    alert("Execo ! On recommence ?");
   }
 
   userInput.value = "";
@@ -210,7 +223,7 @@ function submit() {
       </v-col>
       <v-divider vertical color="white"></v-divider>
       <v-col>
-        <ComputerSide />
+        <ComputerSide ref="computerSideRef" />
       </v-col>
     </v-row>
   </div>
