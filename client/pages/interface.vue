@@ -90,7 +90,7 @@ function debug() {
   });
 
   typewriter
-    .deleteAll(2)
+    .deleteAll(1)
     .typeString(linesToCode.filter((_, i) => i < whichLineCounter).join(""))
     .start();
 }
@@ -122,7 +122,7 @@ function submit() {
     <v-container class="ma-1 d-flex justify-space-between">
       <v-text-field
         label="Code"
-        placeholder="ex: codeFast()"
+        placeholder="ex: codeQuickly()"
         outlined
         style="max-width: 200px; margin-right: 20px"
         hint="Appuies sur Entrée pour valider"

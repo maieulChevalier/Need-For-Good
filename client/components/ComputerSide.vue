@@ -1,32 +1,16 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import Typed from "typed.js";
-import { minMaxRandomNumber } from "../helpers/minMaxRandomNumber";
+import { ref, onMounted } from "vue";
+import Typewriter from "typewriter-effect/dist/core";
 
-const props = defineProps({
-  userInput: String,
-});
-
-const element = ref();
-let typing = ref();
-
-const options = {
-  strings: [
-    "function multiply() {<br/> &nbsp;&nbsp;&nbsp; const a = prompt() <br/> &nbsp;&nbsp;&nbsp; const b = prompt() <br/> &nbsp;&nbsp;&nbsp; return alert(a * b); <br/> }; <br/> <br/> multiply();",
-  ],
-  typeSpeed: 20,
-  onBegin: (self) => {
-    self.stop();
-  },
-};
+const typewriterRef = ref();
+let typewriter = ref();
 
 onMounted(() => {
-  typing = new Typed(element.value, options);
+  typewriter = new Typewriter(typewriterRef.value, {
+    delay: 10,
+    autoStart: true,
+  });
 });
-
-function toggleTyping() {
-  typing.start();
-}
 </script>
 
 <template>
