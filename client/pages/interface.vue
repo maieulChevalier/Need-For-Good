@@ -22,6 +22,15 @@ const linesToCode = [
   "multiply();",
 ];
 let whichLineCounter = 0;
+const progressionRate = ref(0);
+let numberOfBugs = 0;
+const bugsRate = ref(0);
+
+onMounted(() => {
+  typewriter = new Typewriter(typewriterRef.value, {
+    delay: 30,
+  });
+});
 
 function separateString(str, n) {
   let arr = [];
@@ -37,28 +46,22 @@ function insertBugs(str, randomNumber) {
   return newValue;
 }
 
+function insertSomeBugs(pos) {
+  linesToCode[pos] = insertBugs(linesToCode[pos], minMaxRandomNumber(10, 30));
+}
 function insertManyBugs(pos) {
-  linesToCode[pos] = insertBugs(linesToCode[pos], minMaxRandomNumber(5, 10));
+  linesToCode[pos] = insertBugs(linesToCode[pos], minMaxRandomNumber(5, 8));
 }
 
-onMounted(() => {
-  typewriter = new Typewriter(typewriterRef.value, {
-    delay: 30,
-  });
-});
-
-const rules = {
-  maxLength: (value) => value.length <= 20 || "Max 20 characters",
-  characters: (value) =>
-    !!(value || "").match(/^[a-zA-Z-()]*$/) || "Caractères non valides",
-};
-
 function codeCarefully() {
-  linesToCode[whichLineCounter] = insertBugs(
-    linesToCode[whichLineCounter],
-    minMaxRandomNumber(10, 20)
-  );
+  insertSomeBugs(whichLineCounter);
+
   typewriter.typeString(linesToCode[whichLineCounter]).start();
+
+  numberOfBugs = linesToCode[whichLineCounter].split(",").length - 1;
+  progressionRate.value = progressionRate.value + 100 / 6 - numberOfBugs * 5;
+  bugsRate.value = bugsRate.value + 100 / 6;
+
   whichLineCounter++;
 }
 
@@ -71,11 +74,17 @@ function codeQuickly() {
         linesToCode[whichLineCounter] + linesToCode[whichLineCounter + 1]
       )
       .start();
-    whichLineCounter = whichLineCounter + 2;
+
+    numberOfBugs = linesToCode[whichLineCounter].split(",").length - 1;
+    progressionRate.value = progressionRate.value + 100 / 3 - numberOfBugs * 5;
+    bugsRate.value = bugsRate.value + 100 / 3;
+
+    whichLineCounter++;
+    whichLineCounter++;
   } else {
     insertManyBugs(whichLineCounter);
     typewriter.typeString(linesToCode[whichLineCounter]).start();
-    whichLineCounter = whichLineCounter + 1;
+    whichLineCounter++;
   }
 }
 
@@ -94,6 +103,12 @@ function debug() {
     .typeString(linesToCode.filter((_, i) => i < whichLineCounter).join(""))
     .start();
 }
+
+const rules = {
+  maxLength: (value) => value.length <= 20 || "Max 20 characters",
+  characters: (value) =>
+    !!(value || "").match(/^[a-zA-Z-()]*$/) || "Caractères non valides",
+};
 
 function submit() {
   if (
@@ -150,8 +165,8 @@ function submit() {
           <v-progress-linear
             background-color="red lighten-2"
             color="green lighten-2"
-            value="5"
-            buffer-value="5"
+            v-model="progressionRate"
+            :buffer-value="bugsRate"
             stream
           ></v-progress-linear>
           <br />
