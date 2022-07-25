@@ -24,7 +24,8 @@ const linesToCode = [
   "multiply();",
 ];
 let whichLineCounter = 0;
-const progressionRate = ref(0);
+const completionValue = 100;
+const progressionRate = ref(5);
 let numberOfBugs = 0;
 const bugsRate = ref(0);
 
@@ -61,8 +62,10 @@ function insertManyBugs(pos) {
 function updateProgress(totalLinesToComplete) {
   numberOfBugs = linesToCode[whichLineCounter].split(",").length - 1;
   progressionRate.value =
-    progressionRate.value + 100 / totalLinesToComplete - numberOfBugs;
-  bugsRate.value = bugsRate.value + 100 / totalLinesToComplete;
+    progressionRate.value +
+    completionValue / totalLinesToComplete -
+    numberOfBugs;
+  bugsRate.value = bugsRate.value + completionValue / totalLinesToComplete;
 }
 
 function codeCarefully() {
@@ -73,6 +76,12 @@ function codeCarefully() {
   insertSomeBugs(whichLineCounter);
   typewriter.typeString(linesToCode[whichLineCounter]).start();
   updateProgress(linesToCode.length);
+  console.log(
+    " progressionRate.value",
+    progressionRate.value,
+    "bugsRate.value",
+    bugsRate.value
+  );
   whichLineCounter++;
 }
 
@@ -122,14 +131,8 @@ function debug() {
       .join("")
       .split(",").length - 1;
   progressionRate.value =
-    (100 / linesToCode.length) * whichLineCounter - numberOfBugs;
-  bugsRate.value = (100 / linesToCode.length) * whichLineCounter;
-  console.log(
-    " progressionRate.value",
-    progressionRate.value,
-    "bugsRate.value",
-    bugsRate.value
-  );
+    (completionValue / linesToCode.length) * whichLineCounter - numberOfBugs;
+  bugsRate.value = (completionValue / linesToCode.length) * whichLineCounter;
 }
 
 const rules = {
@@ -153,8 +156,14 @@ function submit() {
   }
 
   if (userInput.value === "codeCarefully()") {
+    if (whichLineCounter === 0) {
+      progressionRate.value = 0;
+    }
     codeCarefully();
   } else if (userInput.value === "codeQuickly()") {
+    if (whichLineCounter === 0) {
+      progressionRate.value = 0;
+    }
     codeQuickly();
   } else if (userInput.value === "debug()") {
     debug();
@@ -164,14 +173,20 @@ function submit() {
 
   computerSideRef.value.robotCode();
 
-  if (progressionRate.value >= 100 && robotProgressionRate.value < 100) {
+  if (
+    progressionRate.value >= completionValue &&
+    robotProgressionRate.value < completionValue
+  ) {
     alert("Bravoooo 🙌✊🥳🎉👏 Tu as gagné la compétition !");
     multiply();
-  } else if (progressionRate.value < 100 && robotProgressionRate.value >= 100) {
+  } else if (
+    progressionRate.value < completionValue &&
+    robotProgressionRate.value >= completionValue
+  ) {
     alert("Je t'ai batu ! 😋");
   } else if (
-    progressionRate.value === 100 &&
-    robotProgressionRate.value === 100
+    progressionRate.value === completionValue &&
+    robotProgressionRate.value === completionValue
   ) {
     alert("Execo ! On recommence ?");
   }
