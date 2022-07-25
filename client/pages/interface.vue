@@ -135,6 +135,14 @@ function debug() {
   bugsRate.value = (completionValue / linesToCode.length) * whichLineCounter;
 }
 
+function reset() {
+  whichLineCounter = 0;
+  progressionRate.value = 5;
+  bugsRate.value = 0;
+  typewriter.deleteAll(1).start();
+  computerSideRef.value.robotReset();
+}
+
 const rules = {
   maxLength: (value) => value.length <= 20 || "Max 20 characters",
   characters: (value) =>
@@ -144,7 +152,9 @@ const rules = {
 function multiply() {
   const a = prompt("Choisis un premier nombre.");
   const b = prompt("Choisis un deuxième nombre.");
-  return alert(`${a} x ${b} = ${a * b}`);
+  return alert(
+    `${a} x ${b} = ${a * b} 😲 Ta calculatrice fonctionne à merveille !`
+  );
 }
 
 function submit() {
@@ -179,16 +189,19 @@ function submit() {
   ) {
     alert("Bravoooo 🙌✊🥳🎉👏 Tu as gagné la compétition !");
     multiply();
+    reset();
   } else if (
     progressionRate.value < completionValue &&
     robotProgressionRate.value >= completionValue
   ) {
     alert("Je t'ai batu ! 😋");
+    reset();
   } else if (
     progressionRate.value === completionValue &&
     robotProgressionRate.value === completionValue
   ) {
     alert("Execo ! On recommence ?");
+    reset();
   }
 
   userInput.value = "";
@@ -210,7 +223,7 @@ function submit() {
         @keyup.enter="submit"
       >
       </v-text-field>
-      <v-btn elevation="9" x-large color="primary" :to="'/interface'">
+      <v-btn elevation="9" x-large color="primary" @click="reset">
         RESET
       </v-btn>
     </v-container>
@@ -241,6 +254,18 @@ function submit() {
         <ComputerSide ref="computerSideRef" />
       </v-col>
     </v-row>
+    <br />
+    <v-footer
+      :color="'transparent'"
+      padless
+      fixed
+      class="d-flex justify-center"
+    >
+      <blockquote class="blockquote">
+        "Coder vite c'est bien... Mais coder bien, c'est mieux !"
+        <em>&mdash;Foger</em>
+      </blockquote></v-footer
+    >
   </div>
 </template>
 

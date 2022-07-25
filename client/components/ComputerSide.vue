@@ -8,8 +8,10 @@ let typewriter = ref();
 const linesToCode = [
   "function ",
   "robotMultiplication() {<br>",
-  "\xa0\xa0\xa0const a = 0; <br>",
-  " \xa0\xa0\xa0const b = 0; <br>",
+  "\xa0\xa0\xa0const a = 0;",
+  " <br>",
+  " \xa0\xa0\xa0const b = 0;",
+  "<br>",
   " \xa0\xa0\xa0return alert(0 + 0 = ",
   "la tête à toto) <br>",
   "};<br>",
@@ -28,6 +30,12 @@ function robotCode() {
   whichLineCounter++;
 }
 
+function robotReset() {
+  whichLineCounter = 0;
+  robotProgressionRate.value = 5;
+  typewriter.deleteAll(1).start();
+}
+
 onMounted(() => {
   typewriter = new Typewriter(typewriterRef.value, {
     delay: 1,
@@ -36,6 +44,7 @@ onMounted(() => {
 
 defineExpose({
   robotCode,
+  robotReset,
 });
 </script>
 
@@ -55,14 +64,6 @@ defineExpose({
       ></v-progress-linear>
       <br />
       <p><span ref="typewriterRef"></span></p>
-      <blockquote class="blockquote">
-        "Coder vite c'est bien... Mais coder bien, c'est mieux !"
-        <footer>
-          <small>
-            <em>&mdash;Foger</em>
-          </small>
-        </footer>
-      </blockquote>
     </v-container>
   </div>
 </template>
