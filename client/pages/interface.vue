@@ -28,14 +28,15 @@ const bugsRate = ref(0);
 
 onMounted(() => {
   typewriter = new Typewriter(typewriterRef.value, {
-    delay: 30,
+    delay: 1,
   });
+  typewriter.changeDeleteSpeed(1);
 });
 
 function separateString(str, n) {
   let arr = [];
   for (let i = 0; i < str.length; i += n) {
-    arr.push(str.substr(i, n));
+    arr.push(str?.substr(i, n));
   }
   return arr;
 }
@@ -47,21 +48,27 @@ function insertBugs(str, randomNumber) {
 }
 
 function insertSomeBugs(pos) {
-  linesToCode[pos] = insertBugs(linesToCode[pos], minMaxRandomNumber(10, 30));
+  linesToCode[pos] = insertBugs(linesToCode[pos], minMaxRandomNumber(2, 40));
 }
 function insertManyBugs(pos) {
-  linesToCode[pos] = insertBugs(linesToCode[pos], minMaxRandomNumber(5, 8));
+  linesToCode[pos] = insertBugs(linesToCode[pos], minMaxRandomNumber(2, 10));
+}
+
+function updateProgress(totalLinesToComplete) {
+  numberOfBugs = linesToCode[whichLineCounter].split(",").length - 1;
+  progressionRate.value =
+    progressionRate.value + 100 / totalLinesToComplete - numberOfBugs;
+  bugsRate.value = bugsRate.value + 100 / totalLinesToComplete;
 }
 
 function codeCarefully() {
+  if (whichLineCounter > 5) {
+    alert("Il faut débugger ton code!");
+    return;
+  }
   insertSomeBugs(whichLineCounter);
-
   typewriter.typeString(linesToCode[whichLineCounter]).start();
-
-  numberOfBugs = linesToCode[whichLineCounter].split(",").length - 1;
-  progressionRate.value = progressionRate.value + 100 / 6 - numberOfBugs * 5;
-  bugsRate.value = bugsRate.value + 100 / 6;
-
+  updateProgress(6);
   whichLineCounter++;
 }
 
@@ -74,23 +81,23 @@ function codeQuickly() {
         linesToCode[whichLineCounter] + linesToCode[whichLineCounter + 1]
       )
       .start();
-
-    numberOfBugs = linesToCode[whichLineCounter].split(",").length - 1;
-    progressionRate.value = progressionRate.value + 100 / 3 - numberOfBugs * 5;
-    bugsRate.value = bugsRate.value + 100 / 3;
-
+    updateProgress(3);
     whichLineCounter++;
     whichLineCounter++;
-  } else {
+  } else if (whichLineCounter === 5) {
     insertManyBugs(whichLineCounter);
     typewriter.typeString(linesToCode[whichLineCounter]).start();
+    updateProgress(6);
     whichLineCounter++;
+  } else {
+    alert("Il faut débugger ton code!");
+    return;
   }
 }
 
 function debug() {
   linesToCode.forEach((el, index) => {
-    const times = minMaxRandomNumber(1, 4);
+    const times = minMaxRandomNumber(2, 3);
     for (let i = 0; i < times; i++) {
       el = el.replace(",", "");
     }
@@ -102,6 +109,21 @@ function debug() {
     .deleteAll(1)
     .typeString(linesToCode.filter((_, i) => i < whichLineCounter).join(""))
     .start();
+
+  console.log("whichlinecounter: ", whichLineCounter);
+  numberOfBugs =
+    linesToCode
+      .filter((_, i) => i < whichLineCounter)
+      .join("")
+      .split(",").length - 1;
+  progressionRate.value = (100 / 6) * whichLineCounter - numberOfBugs;
+  bugsRate.value = (100 / 6) * whichLineCounter;
+  console.log(
+    " progressionRate.value",
+    progressionRate.value,
+    "bugsRate.value",
+    bugsRate.value
+  );
 }
 
 const rules = {
@@ -109,6 +131,12 @@ const rules = {
   characters: (value) =>
     !!(value || "").match(/^[a-zA-Z-()]*$/) || "Caractères non valides",
 };
+
+function multiply() {
+  const a = prompt("Choisis un premier nombre.");
+  const b = prompt("Choisis un deuxième nombre.");
+  return alert(`${a} x ${b} = ${a * b}`);
+}
 
 function submit() {
   if (
@@ -126,6 +154,13 @@ function submit() {
     debug();
   } else {
     alert("commande invalide");
+  }
+
+  if (progressionRate.value === 100) {
+    alert(
+      "Bravoooo 🙌✊🥳🎉👏 Tu as codé une calculette capable de multiplier !"
+    );
+    multiply();
   }
 
   userInput.value = "";
@@ -171,14 +206,6 @@ function submit() {
           ></v-progress-linear>
           <br />
           <p><span ref="typewriterRef"></span></p>
-          <blockquote class="blockquote">
-            "Coder vite c'est bien... Mais coder bien, c'est mieux !"
-            <footer>
-              <small>
-                <em>&mdash;Foger</em>
-              </small>
-            </footer>
-          </blockquote>
         </v-container>
       </v-col>
       <v-divider vertical color="white"></v-divider>

@@ -7,8 +7,7 @@ let typewriter = ref();
 
 onMounted(() => {
   typewriter = new Typewriter(typewriterRef.value, {
-    delay: 10,
-    autoStart: true,
+    delay: 1,
   });
 });
 </script>
@@ -23,7 +22,7 @@ onMounted(() => {
       <br />
       <v-progress-linear
         color="green lighten-2"
-        value="5"
+        value="0"
         buffer-value="0"
         stream
       ></v-progress-linear>
@@ -39,7 +38,6 @@ onMounted(() => {
         </footer>
       </blockquote>
     </v-container>
-    <v-btn @click="toggleTyping()" color="primary">toggle</v-btn>
   </div>
 </template>
 
