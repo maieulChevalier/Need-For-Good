@@ -37,12 +37,18 @@ onMounted(() => {
       "Voici les commandes qui te permettront d'écrire le programme : <br>"
     )
     .pauseFor(1000)
-    .typeString("<strong>codeCarefully()</strong> <br>")
+    .typeString(
+      "<u><strong>codeCarefully()</strong></u> : code aléatoirement une petite quantité avec peu de chances d'introduire des bugs <br>"
+    )
     .pauseFor(1000)
-    .typeString("<strong>codeQuickly()</strong> <br>")
+    .typeString(
+      "<u><strong>codeQuickly()</strong></u>  : code aléatoirement une grande quantité avec beaucoup de chances d'introduire des bugs <br>"
+    )
     .pauseFor(1000)
 
-    .typeString("<strong>debug()</strong> <br>")
+    .typeString(
+      "<u><strong>debug()</strong></u>  : supprime aléatoirement une certaine quantité de bugs <br>"
+    )
     .pauseFor(1000)
 
     .typeString("Cliques sur START quand tu es prêt(e) 🙃.")

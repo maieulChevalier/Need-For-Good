@@ -19,7 +19,7 @@
         <v-list-group no-action>
           <template v-slot:activator>
             <v-list-item-action>
-              <v-icon>mdi-robot-happy-outline</v-icon>
+              <v-icon>mdi-help</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Commandes:</v-list-item-title>

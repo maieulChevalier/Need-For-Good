@@ -70,7 +70,9 @@ function updateProgress(totalLinesToComplete) {
 
 function codeCarefully() {
   if (whichLineCounter >= linesToCode.length) {
-    alert("Il faut débugger ton code!");
+    alert(
+      "Tu as fini d'écrire le programme mais il y a des bugs. Il faut debug() ton code! "
+    );
     return;
   }
   insertSomeBugs(whichLineCounter);
@@ -194,7 +196,7 @@ function submit() {
     progressionRate.value < completionValue &&
     robotProgressionRate.value >= completionValue
   ) {
-    alert("Je t'ai batu ! 😋");
+    alert("Je t'ai batu ! 😋 Essaies de ne pas coder trop vite !");
     reset();
   } else if (
     progressionRate.value === completionValue &&
@@ -212,6 +214,7 @@ function submit() {
   <div>
     <v-container class="ma-1 d-flex justify-space-between">
       <v-text-field
+        autofocus
         label="Code"
         placeholder="ex: codeQuickly()"
         outlined
@@ -255,6 +258,10 @@ function submit() {
       </v-col>
     </v-row>
     <br />
+    <p>
+      Rappel des commandes : <strong>codeCarefully()</strong> ;
+      <strong>codeQuickly()</strong> ; <strong>debug()</strong>
+    </p>
     <v-footer
       :color="'transparent'"
       padless
