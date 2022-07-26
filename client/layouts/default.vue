@@ -39,6 +39,9 @@
           <v-list-item :key="'debug()'">
             <v-list-item-title><strong>debug()</strong></v-list-item-title>
           </v-list-item>
+          <v-list-item :key="'reset()'">
+            <v-list-item-title><strong>reset()</strong></v-list-item-title>
+          </v-list-item>
         </v-list-group>
       </v-list>
     </v-navigation-drawer>

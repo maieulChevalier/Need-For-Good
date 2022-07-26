@@ -61,12 +61,21 @@ function insertManyBugs(pos) {
 }
 
 function updateProgress(totalLinesToComplete) {
+  if (whichLineCounter === 0) {
+    progressionRate.value = 0;
+  }
   numberOfBugs = linesToCode[whichLineCounter].split(",").length - 1;
   progressionRate.value =
     progressionRate.value +
     completionValue / totalLinesToComplete -
     numberOfBugs;
   bugsRate.value = bugsRate.value + completionValue / totalLinesToComplete;
+  console.log(
+    "progressionRate.value",
+    progressionRate.value,
+    "bugsRate.value",
+    bugsRate.value
+  );
 }
 
 function multiply() {
@@ -191,7 +200,6 @@ function debug() {
       whoIsTheWinner();
     });
 
-  console.log("whichlinecounter: ", whichLineCounter);
   numberOfBugs =
     linesToCode
       .filter((_, i) => i < whichLineCounter)
@@ -222,14 +230,8 @@ function submit() {
   }
 
   if (userInput.value === "codeCarefully()") {
-    if (whichLineCounter === 0) {
-      progressionRate.value = 0;
-    }
     codeCarefully();
   } else if (userInput.value === "codeQuickly()") {
-    if (whichLineCounter === 0) {
-      progressionRate.value = 0;
-    }
     codeQuickly();
   } else if (userInput.value === "debug()") {
     debug();
@@ -248,7 +250,7 @@ function submit() {
     <v-container class="ma-1 d-flex justify-space-between">
       <v-text-field
         autofocus
-        label="Codes toi même ici"
+        label="Codes toi-même ici"
         placeholder="ex: codeQuickly()"
         outlined
         style="max-width: 200px; margin-right: 20px"
