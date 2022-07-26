@@ -16,6 +16,30 @@
             <v-list-item-title v-text="item.title" />
           </v-list-item-content>
         </v-list-item>
+        <v-list-group no-action>
+          <template v-slot:activator>
+            <v-list-item-action>
+              <v-icon>mdi-robot-happy-outline</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Commandes:</v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item :key="'codeCarefully()'">
+            <v-list-item-title
+              ><strong>codeCarefully()</strong></v-list-item-title
+            >
+          </v-list-item>
+          <v-list-item :key="'codeQuickly()'">
+            <v-list-item-title
+              ><strong>codeQuickly()</strong></v-list-item-title
+            >
+          </v-list-item>
+          <v-list-item :key="'debug()'">
+            <v-list-item-title><strong>debug()</strong></v-list-item-title>
+          </v-list-item>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
     <v-app-bar :color="'transparent'" :elevation="0" app>
@@ -61,6 +85,11 @@ export default {
           icon: "mdi-chart-bubble",
           title: "Interface",
           to: "/interface",
+        },
+        {
+          icon: "mdi-history",
+          title: "Historique",
+          to: "/history",
         },
       ],
       // miniVariant: false,

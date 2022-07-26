@@ -51,8 +51,8 @@ defineExpose({
 <template>
   <div>
     <v-container>
-      <v-icon x-large class="d-flex justify-center"
-        >mdi-robot-happy-outline
+      <v-icon x-large class="d-flex justify-center">
+        mdi-robot-happy-outline
       </v-icon>
       <br />
       <br />
