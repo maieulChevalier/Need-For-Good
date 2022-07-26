@@ -1,10 +1,10 @@
 <script setup>
-// Ajouter les 4 actions
 // Ajouter couleurs au code "écrit" par l'utilisateur et l'IA
 // Protéger le TextField
 // Écrire les tests
+// Adapter l'UI pour mobile
 
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUpdated } from "vue";
 import ComputerSide from "../components/ComputerSide.vue";
 import Typewriter from "typewriter-effect/dist/core";
 
@@ -28,6 +28,7 @@ const completionValue = 100;
 const progressionRate = ref(5);
 let numberOfBugs = 0;
 const bugsRate = ref(0);
+const disabled = ref(false);
 
 const computerSideRef = ref();
 
@@ -68,6 +69,37 @@ function updateProgress(totalLinesToComplete) {
   bugsRate.value = bugsRate.value + completionValue / totalLinesToComplete;
 }
 
+function multiply() {
+  const a = prompt("Choisis un premier nombre.");
+  const b = prompt("Choisis un deuxième nombre.");
+  return alert(
+    `${a} x ${b} = ${a * b} 😲 Ta calculatrice fonctionne à merveille !`
+  );
+}
+
+function whoIsTheWinner() {
+  if (
+    progressionRate.value >= completionValue &&
+    robotProgressionRate.value < completionValue
+  ) {
+    alert("Bravoooo 🙌✊🥳🎉👏 Tu as gagné la compétition !");
+    multiply();
+    reset();
+  } else if (
+    progressionRate.value < completionValue &&
+    robotProgressionRate.value >= completionValue
+  ) {
+    alert("Je t'ai batu ! 😋 Essaies de ne pas coder trop vite !");
+    reset();
+  } else if (
+    progressionRate.value >= completionValue &&
+    robotProgressionRate.value >= completionValue
+  ) {
+    alert("Execo ! On recommence ?");
+    reset();
+  }
+}
+
 function codeCarefully() {
   if (whichLineCounter >= linesToCode.length) {
     alert(
@@ -76,15 +108,21 @@ function codeCarefully() {
     return;
   }
   insertSomeBugs(whichLineCounter);
-  typewriter.typeString(linesToCode[whichLineCounter]).start();
+  typewriter
+    .callFunction(() => {
+      disabled.value = true;
+    })
+    .typeString(linesToCode[whichLineCounter])
+
+    .start()
+    .callFunction(() => {
+      disabled.value = false;
+      whoIsTheWinner();
+    });
+
   updateProgress(linesToCode.length);
-  console.log(
-    " progressionRate.value",
-    progressionRate.value,
-    "bugsRate.value",
-    bugsRate.value
-  );
   whichLineCounter++;
+  computerSideRef.value.robotCode();
 }
 
 function codeQuickly() {
@@ -96,18 +134,38 @@ function codeQuickly() {
     insertManyBugs(whichLineCounter);
     insertManyBugs(whichLineCounter + 1);
     typewriter
+      .callFunction(() => {
+        disabled.value = true;
+      })
       .typeString(
         linesToCode[whichLineCounter] + linesToCode[whichLineCounter + 1]
       )
-      .start();
+
+      .start()
+      .callFunction(() => {
+        disabled.value = false;
+        whoIsTheWinner();
+      });
     updateProgress(linesToCode.length / 2);
     whichLineCounter++;
     whichLineCounter++;
+    computerSideRef.value.robotCode();
   } else {
     insertManyBugs(whichLineCounter);
-    typewriter.typeString(linesToCode[whichLineCounter]).start();
+    typewriter
+      .callFunction(() => {
+        disabled.value = true;
+      })
+      .typeString(linesToCode[whichLineCounter])
+
+      .start()
+      .callFunction(() => {
+        disabled.value = false;
+        whoIsTheWinner();
+      });
     updateProgress(linesToCode.length);
     whichLineCounter++;
+    computerSideRef.value.robotCode();
   }
 }
 
@@ -122,9 +180,16 @@ function debug() {
   });
 
   typewriter
+    .callFunction(() => {
+      disabled.value = true;
+    })
     .deleteAll(1)
     .typeString(linesToCode.filter((_, i) => i < whichLineCounter).join(""))
-    .start();
+    .start()
+    .callFunction(() => {
+      disabled.value = false;
+      whoIsTheWinner();
+    });
 
   console.log("whichlinecounter: ", whichLineCounter);
   numberOfBugs =
@@ -135,14 +200,11 @@ function debug() {
   progressionRate.value =
     (completionValue / linesToCode.length) * whichLineCounter - numberOfBugs;
   bugsRate.value = (completionValue / linesToCode.length) * whichLineCounter;
+  computerSideRef.value.robotCode();
 }
 
 function reset() {
-  whichLineCounter = 0;
-  progressionRate.value = 5;
-  bugsRate.value = 0;
-  typewriter.deleteAll(1).start();
-  computerSideRef.value.robotReset();
+  window.location.reload();
 }
 
 const rules = {
@@ -150,14 +212,6 @@ const rules = {
   characters: (value) =>
     !!(value || "").match(/^[a-zA-Z-()]*$/) || "Caractères non valides",
 };
-
-function multiply() {
-  const a = prompt("Choisis un premier nombre.");
-  const b = prompt("Choisis un deuxième nombre.");
-  return alert(
-    `${a} x ${b} = ${a * b} 😲 Ta calculatrice fonctionne à merveille !`
-  );
-}
 
 function submit() {
   if (
@@ -179,31 +233,10 @@ function submit() {
     codeQuickly();
   } else if (userInput.value === "debug()") {
     debug();
+  } else if (userInput.value === "reset()") {
+    reset();
   } else {
     alert("commande invalide");
-  }
-
-  computerSideRef.value.robotCode();
-
-  if (
-    progressionRate.value >= completionValue &&
-    robotProgressionRate.value < completionValue
-  ) {
-    alert("Bravoooo 🙌✊🥳🎉👏 Tu as gagné la compétition !");
-    multiply();
-    reset();
-  } else if (
-    progressionRate.value < completionValue &&
-    robotProgressionRate.value >= completionValue
-  ) {
-    alert("Je t'ai batu ! 😋 Essaies de ne pas coder trop vite !");
-    reset();
-  } else if (
-    progressionRate.value === completionValue &&
-    robotProgressionRate.value === completionValue
-  ) {
-    alert("Execo ! On recommence ?");
-    reset();
   }
 
   userInput.value = "";
@@ -215,7 +248,7 @@ function submit() {
     <v-container class="ma-1 d-flex justify-space-between">
       <v-text-field
         autofocus
-        label="Code"
+        label="Codes toi même ici"
         placeholder="ex: codeQuickly()"
         outlined
         style="max-width: 200px; margin-right: 20px"
@@ -224,10 +257,48 @@ function submit() {
         :rules="[rules.characters, rules.maxLength]"
         v-model="userInput"
         @keyup.enter="submit"
+        :disabled="disabled"
       >
       </v-text-field>
-      <v-btn elevation="9" x-large color="primary" @click="reset">
-        RESET
+      <v-btn
+        class="text-none"
+        elevation="9"
+        x-large
+        color="primary"
+        @click="codeCarefully"
+        :disabled="disabled"
+      >
+        codeCarefully()
+      </v-btn>
+      <v-btn
+        class="text-none"
+        elevation="9"
+        x-large
+        color="primary"
+        @click="codeQuickly"
+        :disabled="disabled"
+      >
+        codeQuickly()
+      </v-btn>
+      <v-btn
+        class="text-none"
+        elevation="9"
+        x-large
+        color="primary"
+        @click="debug"
+        :disabled="disabled"
+      >
+        debug()
+      </v-btn>
+      <v-btn
+        class="text-none"
+        elevation="9"
+        x-large
+        color="primary"
+        @click="reset"
+        :disabled="disabled"
+      >
+        reset()
       </v-btn>
     </v-container>
 
@@ -257,11 +328,6 @@ function submit() {
         <ComputerSide ref="computerSideRef" />
       </v-col>
     </v-row>
-    <br />
-    <p>
-      Rappel des commandes : <strong>codeCarefully()</strong> ;
-      <strong>codeQuickly()</strong> ; <strong>debug()</strong>
-    </p>
     <v-footer
       :color="'transparent'"
       padless
