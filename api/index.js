@@ -18,6 +18,10 @@ const client = new MongoClient(uri, {
 
 const usersCollection = client.db("need-for-good").collection("users");
 
+app.get("/", (req, res) => {
+  res.send("Express on Vercel");
+});
+
 app.post("/api/user", async (req, res) => {
   console.log("body: ", req.body);
   try {
@@ -38,15 +42,6 @@ app.post("/api/user", async (req, res) => {
   } catch (err) {
     console.log("error: ", err);
   }
-
-  // try {
-  //   await client
-  //     .db("need-for-good")
-  //     .collection("users")
-  //     .insertOne({ userName: req.body.userName });
-  // } catch (err) {
-  //   console.log("error: ", err.code);
-  // }
 });
 // //Post Method
 // app.post("/api/post", (req, res) => {
@@ -76,3 +71,5 @@ app.post("/api/user", async (req, res) => {
 app.listen(process.env.PORT, () => {
   console.log(`Server Started at ${process.env.PORT}`);
 });
+
+module.exports = app;
