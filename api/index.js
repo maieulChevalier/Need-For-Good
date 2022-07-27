@@ -16,6 +16,7 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
+client.connect();
 const usersCollection = client.db("need-for-good").collection("users");
 
 usersCollection.createIndex(
