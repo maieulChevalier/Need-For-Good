@@ -5,7 +5,11 @@ var cors = require("cors");
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGIN,
+  })
+);
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri = process.env.DATABASE_URL;
