@@ -39,9 +39,17 @@ export default {
   methods: {
     submit() {
       axios
-        .post(`${process.env.BASE_URL}/user`, {
-          userName: this.userInput,
-        })
+        .post(
+          `${process.env.BASE_URL}/user`,
+          {
+            userName: this.userInput,
+          }
+          // {
+          //   headers: {
+          //     Authorization: "Bearer " + token, //the token is a variable which holds the token
+          //   },
+          // }
+        )
         .then(() => window.localStorage.setItem("userName", this.userInput))
         .then(() =>
           this.$router.push({
