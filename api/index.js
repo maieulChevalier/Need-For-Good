@@ -18,6 +18,16 @@ const client = new MongoClient(uri, {
 
 const usersCollection = client.db("need-for-good").collection("users");
 
+usersCollection.createIndex(
+  { userName: 1 },
+  {
+    collation: {
+      locale: "fr",
+      strength: 2,
+    },
+  }
+);
+
 app.get("/", (req, res) => {
   res.send("Express on Vercel");
 });
@@ -25,19 +35,14 @@ app.get("/", (req, res) => {
 app.post("/api/user", async (req, res) => {
   console.log("body: ", req.body);
   try {
-    const result = await usersCollection.findOneAndUpdate(
-      { userName: req.body.userName },
-      {
-        $setOnInsert: { userName: req.body.userName },
-      },
-      {
-        returnOriginal: false,
-        upsert: true,
-      }
-    );
-    if (result.value !== null) {
+    const user = await usersCollection
+      .find({ userName: req.body.userName })
+      .collation({ locale: "en", strength: 2 }); // to perform case insensitive search
+    if (!user) {
+      await usersCollection.insertOne({
+        userName: req.body.userName,
+      });
     }
-
     res.send(req.body.userName);
   } catch (err) {
     console.log("error: ", err);
