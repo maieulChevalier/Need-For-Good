@@ -42,10 +42,12 @@ app.get("/", (req, res) => {
 app.post("/api/user", async (req, res) => {
   console.log("body: ", req.body);
   try {
-    const user = await usersCollection
+    const users = await usersCollection
       .find({ userName: req.body.userName })
-      .collation({ locale: "en", strength: 2 }); // to perform case insensitive search
-    if (!user) {
+      .collation({ locale: "en", strength: 2 }) // to perform case insensitive search
+      .limit(1)
+      .toArray();
+    if (users.length === 0) {
       await usersCollection.insertOne({
         userName: req.body.userName,
       });
