@@ -62,6 +62,6 @@ onMounted(() => {
 
 <script>
 export default {
-  name: "HelpPage",
+  name: "HistoryPage",
 };
 </script>

@@ -1,10 +1,11 @@
 <script setup>
+// Ajouter l'historique
 // Ajouter couleurs au code "écrit" par l'utilisateur et l'IA
-// Protéger le TextField
-// Écrire les tests
+// Intégrer vuex
 // Adapter l'UI pour mobile
+//
 
-import { ref, onMounted, onUpdated } from "vue";
+import { ref, onMounted } from "vue";
 import ComputerSide from "../components/ComputerSide.vue";
 import Typewriter from "typewriter-effect/dist/core";
 
