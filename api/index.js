@@ -31,6 +31,7 @@ usersCollection.createIndex(
 
 app.get("/", (req, res) => {
   res.send("Express on Vercel");
+  client.close();
 });
 
 app.post("/api/user", async (req, res) => {
