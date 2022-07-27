@@ -39,7 +39,7 @@ export default {
   methods: {
     submit() {
       axios
-        .post("http://localhost:4000/api/user", {
+        .post(`${process.env.BASE_URL}/user`, {
           userName: this.userInput,
         })
         .then(() => window.localStorage.setItem("userName", this.userInput))

@@ -38,6 +38,9 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [],
 
+  env: {
+    BASE_URL: process.env.BASE_URL || "http://localhost:3000",
+  },
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ["~/assets/variables.scss"],
