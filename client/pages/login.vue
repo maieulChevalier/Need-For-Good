@@ -53,7 +53,7 @@ export default {
         .then(() => window.localStorage.setItem("userName", this.userInput))
         .then(() =>
           this.$router.push({
-            path: "/interface",
+            path: "/index",
           })
         );
     },
