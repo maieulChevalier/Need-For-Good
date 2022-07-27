@@ -9,7 +9,7 @@ export default {
     titleTemplate: "%s - client",
     title: "Need For Good",
     htmlAttrs: {
-      lang: "en",
+      lang: "fr",
     },
     meta: [
       { charset: "utf-8" },
@@ -24,7 +24,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: [{ ssr: false, src: "~/plugins/route" }],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,

@@ -1,7 +1,7 @@
 <template>
   <div>
     <p><span ref="typewriterRef"></span></p>
-    <v-btn @click="start" elevation="9" x-large color="primary"> START </v-btn>
+    <v-btn elevation="9" x-large color="primary" to="/interface"> START </v-btn>
   </div>
 </template>
 
@@ -12,17 +12,6 @@ export default {
   name: "HomePage",
   data() {
     return {};
-  },
-  methods: {
-    start() {
-      localStorage.getItem("userName") !== null
-        ? this.$router.push({
-            path: "/interface",
-          })
-        : this.$router.push({
-            path: "/login",
-          });
-    },
   },
   mounted() {
     const typewriter = new Typewriter(this.$refs.typewriterRef, {
