@@ -43,8 +43,8 @@ app.post("/api/user", async (req, res) => {
   console.log("body: ", req.body);
   try {
     const users = await usersCollection
-      .find({ userName: req.body.userName })
-      .collation({ locale: "en", strength: 2 }) // to perform case insensitive search
+      .find({ userName: req.body.userName }) // must use find and collation with index to perform case insensitive search
+      .collation({ locale: "en", strength: 2 })
       .limit(1)
       .toArray();
     if (users.length === 0) {
@@ -52,6 +52,27 @@ app.post("/api/user", async (req, res) => {
         userName: req.body.userName,
       });
     }
+    res.send(req.body.userName);
+  } catch (err) {
+    console.log("error: ", err);
+  }
+});
+
+app.post("/api/user/games-history", async (req, res) => {
+  try {
+    const user = await usersCollection.findOneAndUpdate(
+      { userName: req.body.userName },
+      {
+        $set: {
+          date: new Date(),
+        },
+      },
+      {
+        returnNewDocument: true,
+      }
+    );
+
+    console.log("user: ", user);
     res.send(req.body.userName);
   } catch (err) {
     console.log("error: ", err);

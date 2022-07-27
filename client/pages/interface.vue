@@ -6,11 +6,11 @@
 //
 
 import { ref, onMounted } from "vue";
-import ComputerSide from "../components/ComputerSide.vue";
 import Typewriter from "typewriter-effect/dist/core";
+import axios from "axios";
 
+import ComputerSide from "../components/ComputerSide.vue";
 import { minMaxRandomNumber } from "../helpers/minMaxRandomNumber";
-
 import { robotProgressionRate } from "../customStore/customStore.js";
 
 const userInput = ref("");
@@ -108,6 +108,10 @@ function whoIsTheWinner() {
     alert("Execo ! On recommence ?");
     reset();
   }
+
+  axios.post(`${process.env.BASE_URL}/user/games-history`, {
+    userName: localStorage.getItem("userName"),
+  });
 }
 
 function codeCarefully() {
