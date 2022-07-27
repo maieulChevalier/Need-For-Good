@@ -50,6 +50,7 @@ app.post("/api/user", async (req, res) => {
     if (users.length === 0) {
       await usersCollection.insertOne({
         userName: req.body.userName,
+        gamesHistory: [],
       });
     }
     res.send(req.body.userName);
@@ -63,8 +64,12 @@ app.post("/api/user/games-history", async (req, res) => {
     const user = await usersCollection.findOneAndUpdate(
       { userName: req.body.userName },
       {
-        $set: {
-          date: new Date(),
+        $push: {
+          gamesHistory: {
+            date: new Date(),
+            userProgressionRate: req.body.progressionRate,
+            computerProgressionRate: req.body.computerProgressionRate,
+          },
         },
       },
       {

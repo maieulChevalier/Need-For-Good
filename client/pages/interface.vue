@@ -1,5 +1,5 @@
 <script setup>
-// Ajouter l'historique
+// Ajouter l'historique // Ajouter get request pour afficher la liste de l'historique
 // Ajouter couleurs au code "écrit" par l'utilisateur et l'IA
 // Intégrer vuex
 // Adapter l'UI pour mobile
@@ -109,9 +109,16 @@ function whoIsTheWinner() {
     reset();
   }
 
-  axios.post(`${process.env.BASE_URL}/user/games-history`, {
-    userName: localStorage.getItem("userName"),
-  });
+  if (
+    progressionRate.value >= completionValue ||
+    robotProgressionRate.value >= completionValue
+  ) {
+    axios.post(`${process.env.BASE_URL}/user/games-history`, {
+      userName: localStorage.getItem("userName"),
+      progressionRate: progressionRate.value,
+      computerProgressionRate: robotProgressionRate.value,
+    });
+  }
 }
 
 function codeCarefully() {
