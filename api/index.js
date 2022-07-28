@@ -20,43 +20,25 @@ const client = new MongoClient(uri, {
 client.connect();
 const usersCollection = client.db("need-for-good").collection("users");
 
-usersCollection.createIndex(
-  { userName: 1 },
-  {
-    collation: {
-      locale: "fr",
-      strength: 2,
-    },
-  }
-);
-
 app.get("/", (req, res) => {
   res.send("Express on Vercel");
 });
 
 app.post("/api/user", async (req, res) => {
-  console.log("body: ", req.body);
   try {
-    const users = await usersCollection
-      .find({ userName: req.body.userName }) // must use find and collation with index to perform case insensitive search
-      .collation({ locale: "en", strength: 2 })
-      .limit(1)
-      .toArray();
-
-    console.log("users: ", users);
-
+    const user = await usersCollection.findOne({
+      userName: req.body.userName,
+    });
     try {
-      if (users.length === 0) {
+      if (user === null) {
         const inserted = await usersCollection.insertOne({
           userName: req.body.userName,
           gamesHistory: [],
         });
-        console.log("inserted: ", inserted);
       }
     } catch (error) {
       console.log("Could not insert due to " + error);
     }
-
     res.send(req.body.userName);
   } catch (err) {
     console.log("error: ", err);
@@ -80,8 +62,6 @@ app.post("/api/user/games-history", async (req, res) => {
         returnNewDocument: true,
       }
     );
-
-    console.log("user: ", user);
     res.send(req.body.userName);
   } catch (err) {
     console.log("error: ", err);

@@ -31,8 +31,8 @@ export default {
       rules: {
         maxLength: (value) => value.length <= 50 || "Max 50 caractères",
         characters: (value) =>
-          !!(value || "").match(/^[a-zA-Z0-9_.-]*$/) ||
-          'Ne peut contenir que lettres, chiffres, "_", "-" ou "."',
+          !!(value || "").match(/^[a-z_.-]*$/) ||
+          'Ne peut contenir que lettres minuscules, "_", "-" ou "."',
       },
     };
   },
