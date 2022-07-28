@@ -11,7 +11,6 @@ export default async ({ app }) => {
     if (to.name !== "login" && localStorage.getItem("userName") === null)
       next({ name: "login" });
     else {
-      console.log("helloooo");
       next();
     }
   });

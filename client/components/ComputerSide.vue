@@ -55,8 +55,9 @@ export default {
       <v-icon x-large class="d-flex justify-center">
         mdi-robot-happy-outline
       </v-icon>
-      <br />
-      <br />
+      <v-container text-center>
+        <p>mini-robot</p>
+      </v-container>
       <v-progress-linear
         color="green lighten-2"
         v-model="robotProgressionRate.value"

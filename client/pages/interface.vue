@@ -7,10 +7,12 @@ import axios from "axios";
 import ComputerSide from "../components/ComputerSide.vue";
 import { robotProgressionRate } from "../customStore/customStore";
 import { minMaxRandomNumber } from "../helpers/minMaxRandomNumber";
+
 export default {
   name: "InterfacePage",
   data() {
     return {
+      userName: "",
       typewriter: undefined,
       linesToCode: [
         "function multiply() {<br>",
@@ -43,7 +45,6 @@ export default {
       return newValue;
     },
     insertSomeBugs(pos) {
-      console.log("linestocode: ", this.linesToCode);
       this.linesToCode[pos] = this.insertBugs(
         this.linesToCode[pos],
         minMaxRandomNumber(2, 40)
@@ -84,9 +85,6 @@ export default {
       window.location.reload();
     },
     whoIsTheWinner() {
-      console.log("pg: ", `${this.progressionRate}`);
-      console.log("thiiiiiiis:", this.robotProgressionRate.value);
-
       if (
         this.progressionRate >= this.completionValue ||
         this.robotProgressionRate.value >= this.completionValue
@@ -232,6 +230,7 @@ export default {
       delay: 1,
     });
     this.typewriter.changeDeleteSpeed(1);
+    if (localStorage.userName) this.userName = localStorage.userName;
   },
   components: {
     ComputerSide,
@@ -287,17 +286,16 @@ export default {
         <v-icon dark> mdi-restart </v-icon>
       </v-btn>
     </v-container>
-
     <br />
-
     <v-row>
       <v-col>
         <v-container>
           <v-icon x-large class="d-flex justify-center"
             >mdi-human-child
           </v-icon>
-          <br />
-          <br />
+          <v-container text-center>
+            <p>{{ userName }}</p>
+          </v-container>
           <v-progress-linear
             background-color="red lighten-2"
             color="green lighten-2"
