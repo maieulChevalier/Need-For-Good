@@ -5,11 +5,6 @@ var cors = require("cors");
 const app = express();
 
 app.use(express.json());
-// app.use(
-//   cors({
-//     origin: process.env.ALLOWED_ORIGIN,
-//   })
-// );
 
 app.use(cors());
 
@@ -79,6 +74,18 @@ app.post("/api/user/games-history", async (req, res) => {
 
     console.log("user: ", user);
     res.send(req.body.userName);
+  } catch (err) {
+    console.log("error: ", err);
+  }
+});
+
+app.get("/api/user/games-history", async (req, res) => {
+  try {
+    const user = await usersCollection.findOne({
+      userName: req.query.userName,
+    });
+
+    res.send(user);
   } catch (err) {
     console.log("error: ", err);
   }
