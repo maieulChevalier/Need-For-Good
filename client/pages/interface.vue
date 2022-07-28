@@ -87,7 +87,27 @@ function multiply() {
   );
 }
 
+function reset() {
+  // whichLineCounter = 0;
+  // progressionRate.value = 5;
+  // bugsRate.value = 0;
+  // typewriter.deleteAll(1).start();
+  // computerSideRef.value.robotReset();
+  window.location.reload();
+}
+
 function whoIsTheWinner() {
+  if (
+    progressionRate.value >= completionValue ||
+    robotProgressionRate.value >= completionValue
+  ) {
+    axios.post(`${process.env.BASE_URL}/user/games-history`, {
+      userName: localStorage.getItem("userName"),
+      progressionRate: progressionRate.value,
+      computerProgressionRate: robotProgressionRate.value,
+    });
+  }
+
   if (
     progressionRate.value >= completionValue &&
     robotProgressionRate.value < completionValue
@@ -107,17 +127,6 @@ function whoIsTheWinner() {
   ) {
     alert("Execo ! On recommence ?");
     reset();
-  }
-
-  if (
-    progressionRate.value >= completionValue ||
-    robotProgressionRate.value >= completionValue
-  ) {
-    axios.post(`${process.env.BASE_URL}/user/games-history`, {
-      userName: localStorage.getItem("userName"),
-      progressionRate: progressionRate.value,
-      computerProgressionRate: robotProgressionRate.value,
-    });
   }
 }
 
@@ -221,10 +230,6 @@ function debug() {
     (completionValue / linesToCode.length) * whichLineCounter - numberOfBugs;
   bugsRate.value = (completionValue / linesToCode.length) * whichLineCounter;
   computerSideRef.value.robotCode();
-}
-
-function reset() {
-  window.location.reload();
 }
 
 const rules = {
