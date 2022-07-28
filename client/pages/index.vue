@@ -1,18 +1,8 @@
-<template>
-  <div>
-    <p><span ref="typewriterRef"></span></p>
-    <v-btn elevation="9" x-large color="primary" to="/interface"> START </v-btn>
-  </div>
-</template>
-
 <script>
 import Typewriter from "typewriter-effect/dist/core";
 
 export default {
   name: "HomePage",
-  data() {
-    return {};
-  },
   mounted() {
     const typewriter = new Typewriter(this.$refs.typewriterRef, {
       delay: 10,
@@ -65,3 +55,10 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div>
+    <p><span ref="typewriterRef"></span></p>
+    <v-btn elevation="9" x-large color="primary" to="/interface"> START </v-btn>
+  </div>
+</template>

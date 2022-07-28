@@ -1,21 +1,3 @@
-<template>
-  <div>
-    <v-container v-if="!!gamesHistory" v-for="(game, index) in gamesHistory">
-      <HistoryCard
-        :key="index"
-        :date="game.date"
-        :userProgressionRate="game.userProgressionRate"
-        :computerProgressionRate="game.computerProgressionRate"
-      />
-    </v-container>
-    <v-progress-circular
-      v-else
-      indeterminate
-      color="primary"
-    ></v-progress-circular>
-  </div>
-</template>
-
 <script>
 import axios from "axios";
 import HistoryCard from "../components/HistoryCard.vue";
@@ -42,3 +24,21 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div>
+    <v-container v-if="!!gamesHistory" v-for="(game, index) in gamesHistory">
+      <HistoryCard
+        :key="index"
+        :date="game.date"
+        :userProgressionRate="game.userProgressionRate"
+        :computerProgressionRate="game.computerProgressionRate"
+      />
+    </v-container>
+    <v-progress-circular
+      v-else
+      indeterminate
+      color="primary"
+    ></v-progress-circular>
+  </div>
+</template>

@@ -1,3 +1,14 @@
+<script>
+export default {
+  name: "HistoryPage",
+  props: {
+    date: String,
+    userProgressionRate: Number,
+    computerProgressionRate: Number,
+  },
+};
+</script>
+
 <template>
   <v-card class="mx-auto px-2">
     <v-card-title class="mb-2 d-flex justify-space-between">
@@ -45,17 +56,3 @@
     </v-row>
   </v-card>
 </template>
-
-<script>
-export default {
-  name: "HistoryPage",
-  props: {
-    date: String,
-    userProgressionRate: Number,
-    computerProgressionRate: Number,
-  },
-  mounted() {
-    console.log("daate:", new Date(this.date).toLocaleString("fr"));
-  },
-};
-</script>

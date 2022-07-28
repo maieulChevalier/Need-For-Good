@@ -1,265 +1,242 @@
-<script setup>
-// Ajouter l'historique // Ajouter get request pour afficher la liste de l'historique
+<script>
 // Ajouter couleurs au code "écrit" par l'utilisateur et l'IA
 // Intégrer vuex
-// Adapter l'UI pour mobile
-//
-
-import { ref, onMounted } from "vue";
 import Typewriter from "typewriter-effect/dist/core";
 import axios from "axios";
 
 import ComputerSide from "../components/ComputerSide.vue";
+import { robotProgressionRate } from "../customStore/customStore";
 import { minMaxRandomNumber } from "../helpers/minMaxRandomNumber";
-import { robotProgressionRate } from "../customStore/customStore.js";
+export default {
+  name: "InterfacePage",
+  data() {
+    return {
+      typewriter: undefined,
+      linesToCode: [
+        "function multiply() {<br>",
+        "\xa0\xa0\xa0const a = prompt(); <br>",
+        " \xa0\xa0\xa0const b = prompt(); <br>",
+        " \xa0\xa0\xa0return alert(a * b) <br>",
+        "};<br>",
+        "multiply();",
+      ],
+      whichLineCounter: 0,
+      completionValue: 100,
+      progressionRate: 5,
+      robotProgressionRate,
+      numberOfBugs: 0,
+      bugsRate: 0,
+      disabled: false,
+    };
+  },
+  methods: {
+    separateString(str, n) {
+      let arr = [];
+      for (let i = 0; i < str.length; i += n) {
+        arr.push(str?.substr(i, n));
+      }
+      return arr;
+    },
+    insertBugs(str, randomNumber) {
+      const parts = this.separateString(str, randomNumber);
+      const newValue = parts.join(",");
+      return newValue;
+    },
+    insertSomeBugs(pos) {
+      console.log("linestocode: ", this.linesToCode);
+      this.linesToCode[pos] = this.insertBugs(
+        this.linesToCode[pos],
+        minMaxRandomNumber(2, 40)
+      );
+    },
+    insertManyBugs(pos) {
+      this.linesToCode[pos] = this.insertBugs(
+        this.linesToCode[pos],
+        minMaxRandomNumber(2, 10)
+      );
+    },
+    updateProgress(totalLinesToComplete) {
+      if (this.whichLineCounter === 0) {
+        this.progressionRate = 0;
+      }
+      this.numberOfBugs =
+        this.linesToCode[this.whichLineCounter].split(",").length - 1;
+      this.progressionRate =
+        this.progressionRate +
+        this.completionValue / totalLinesToComplete -
+        this.numberOfBugs;
+      this.bugsRate =
+        this.bugsRate + this.completionValue / totalLinesToComplete;
+    },
+    multiply() {
+      const a = prompt("Choisis un premier nombre.");
+      const b = prompt("Choisis un deuxième nombre.");
+      return alert(
+        `${a} x ${b} = ${a * b} 😲 Ta calculatrice fonctionne à merveille !`
+      );
+    },
+    reset() {
+      // this.whichLineCounter = 0;
+      // this.progressionRate = 5;
+      // this.bugsRate = 0;
+      // this.typewriter.deleteAll(1).start();
+      // this.$refs.computerSideRef.robotReset();
+      window.location.reload();
+    },
+    whoIsTheWinner() {
+      console.log("pg: ", `${this.progressionRate}`);
+      console.log("thiiiiiiis:", this.robotProgressionRate.value);
 
-const userInput = ref("");
-const typewriterRef = ref();
-let typewriter = ref();
-const linesToCode = [
-  "function multiply() {<br>",
-  "\xa0\xa0\xa0const a = prompt(); <br>",
-  " \xa0\xa0\xa0const b = prompt(); <br>",
-  " \xa0\xa0\xa0return alert(a * b) <br>",
-  "};<br>",
-  "multiply();",
-];
-let whichLineCounter = 0;
-const completionValue = 100;
-const progressionRate = ref(5);
-let numberOfBugs = 0;
-const bugsRate = ref(0);
-const disabled = ref(false);
+      if (
+        this.progressionRate >= this.completionValue ||
+        this.robotProgressionRate.value >= this.completionValue
+      ) {
+        axios.post(`${process.env.BASE_URL}/user/games-history`, {
+          userName: localStorage.getItem("userName"),
+          progressionRate: this.progressionRate,
+          computerProgressionRate: this.robotProgressionRate.value,
+        });
+      }
 
-const computerSideRef = ref();
+      if (
+        this.progressionRate >= this.completionValue &&
+        this.robotProgressionRate.value < this.completionValue
+      ) {
+        alert("Bravoooo 🙌✊🥳🎉👏 Tu as gagné la compétition !");
+        this.multiply();
+        this.reset();
+      } else if (
+        this.progressionRate < this.completionValue &&
+        this.robotProgressionRate.value >= this.completionValue
+      ) {
+        alert("Je t'ai batu ! 😋 Essaies de ne pas coder trop vite !");
+        this.reset();
+      } else if (
+        this.progressionRate >= this.completionValue &&
+        this.robotProgressionRate.value >= this.completionValue
+      ) {
+        alert("Execo ! On recommence ?");
+        this.reset();
+      }
+    },
+    codeCarefully() {
+      if (this.whichLineCounter >= this.linesToCode.length) {
+        alert(
+          "Tu as fini d'écrire le programme mais il y a des bugs. Il faut debug() ton code! "
+        );
+        return;
+      }
+      this.insertSomeBugs(this.whichLineCounter);
+      this.typewriter
+        .callFunction(() => {
+          this.disabled = true;
+        })
+        .typeString(this.linesToCode[this.whichLineCounter])
 
-onMounted(() => {
-  typewriter = new Typewriter(typewriterRef.value, {
-    delay: 1,
-  });
-  typewriter.changeDeleteSpeed(1);
-});
+        .start()
+        .callFunction(() => {
+          this.disabled = false;
+          this.whoIsTheWinner();
+        });
 
-function separateString(str, n) {
-  let arr = [];
-  for (let i = 0; i < str.length; i += n) {
-    arr.push(str?.substr(i, n));
-  }
-  return arr;
-}
+      this.updateProgress(this.linesToCode.length);
+      this.whichLineCounter++;
+      this.$refs.computerSideRef.robotCode();
+    },
+    codeQuickly() {
+      if (this.whichLineCounter >= this.linesToCode.length) {
+        alert("Il faut débugger ton code!");
+        return;
+      }
+      if (this.whichLineCounter % 2 === this.linesToCode.length % 2) {
+        this.insertManyBugs(this.whichLineCounter);
+        this.insertManyBugs(this.whichLineCounter + 1);
+        this.typewriter
+          .callFunction(() => {
+            this.disabled = true;
+          })
+          .typeString(
+            this.linesToCode[this.whichLineCounter] +
+              this.linesToCode[this.whichLineCounter + 1]
+          )
 
-function insertBugs(str, randomNumber) {
-  const parts = separateString(str, randomNumber);
-  const newValue = parts.join(",");
-  return newValue;
-}
+          .start()
+          .callFunction(() => {
+            this.disabled = false;
+            this.whoIsTheWinner();
+          });
+        this.updateProgress(this.linesToCode.length / 2);
+        this.whichLineCounter++;
+        this.whichLineCounter++;
+        this.$refs.computerSideRef.robotCode();
+      } else {
+        this.insertManyBugs(this.whichLineCounter);
+        this.typewriter
+          .callFunction(() => {
+            this.disabled = true;
+          })
+          .typeString(this.linesToCode[this.whichLineCounter])
 
-function insertSomeBugs(pos) {
-  linesToCode[pos] = insertBugs(linesToCode[pos], minMaxRandomNumber(2, 40));
-}
-function insertManyBugs(pos) {
-  linesToCode[pos] = insertBugs(linesToCode[pos], minMaxRandomNumber(2, 10));
-}
-
-function updateProgress(totalLinesToComplete) {
-  if (whichLineCounter === 0) {
-    progressionRate.value = 0;
-  }
-  numberOfBugs = linesToCode[whichLineCounter].split(",").length - 1;
-  progressionRate.value =
-    progressionRate.value +
-    completionValue / totalLinesToComplete -
-    numberOfBugs;
-  bugsRate.value = bugsRate.value + completionValue / totalLinesToComplete;
-  console.log(
-    "progressionRate.value",
-    progressionRate.value,
-    "bugsRate.value",
-    bugsRate.value
-  );
-}
-
-function multiply() {
-  const a = prompt("Choisis un premier nombre.");
-  const b = prompt("Choisis un deuxième nombre.");
-  return alert(
-    `${a} x ${b} = ${a * b} 😲 Ta calculatrice fonctionne à merveille !`
-  );
-}
-
-function reset() {
-  // whichLineCounter = 0;
-  // progressionRate.value = 5;
-  // bugsRate.value = 0;
-  // typewriter.deleteAll(1).start();
-  // computerSideRef.value.robotReset();
-  window.location.reload();
-}
-
-function whoIsTheWinner() {
-  if (
-    progressionRate.value >= completionValue ||
-    robotProgressionRate.value >= completionValue
-  ) {
-    axios.post(`${process.env.BASE_URL}/user/games-history`, {
-      userName: localStorage.getItem("userName"),
-      progressionRate: progressionRate.value,
-      computerProgressionRate: robotProgressionRate.value,
-    });
-  }
-
-  if (
-    progressionRate.value >= completionValue &&
-    robotProgressionRate.value < completionValue
-  ) {
-    alert("Bravoooo 🙌✊🥳🎉👏 Tu as gagné la compétition !");
-    multiply();
-    reset();
-  } else if (
-    progressionRate.value < completionValue &&
-    robotProgressionRate.value >= completionValue
-  ) {
-    alert("Je t'ai batu ! 😋 Essaies de ne pas coder trop vite !");
-    reset();
-  } else if (
-    progressionRate.value >= completionValue &&
-    robotProgressionRate.value >= completionValue
-  ) {
-    alert("Execo ! On recommence ?");
-    reset();
-  }
-}
-
-function codeCarefully() {
-  if (whichLineCounter >= linesToCode.length) {
-    alert(
-      "Tu as fini d'écrire le programme mais il y a des bugs. Il faut debug() ton code! "
-    );
-    return;
-  }
-  insertSomeBugs(whichLineCounter);
-  typewriter
-    .callFunction(() => {
-      disabled.value = true;
-    })
-    .typeString(linesToCode[whichLineCounter])
-
-    .start()
-    .callFunction(() => {
-      disabled.value = false;
-      whoIsTheWinner();
-    });
-
-  updateProgress(linesToCode.length);
-  whichLineCounter++;
-  computerSideRef.value.robotCode();
-}
-
-function codeQuickly() {
-  if (whichLineCounter >= linesToCode.length) {
-    alert("Il faut débugger ton code!");
-    return;
-  }
-  if (whichLineCounter % 2 === linesToCode.length % 2) {
-    insertManyBugs(whichLineCounter);
-    insertManyBugs(whichLineCounter + 1);
-    typewriter
-      .callFunction(() => {
-        disabled.value = true;
-      })
-      .typeString(
-        linesToCode[whichLineCounter] + linesToCode[whichLineCounter + 1]
-      )
-
-      .start()
-      .callFunction(() => {
-        disabled.value = false;
-        whoIsTheWinner();
+          .start()
+          .callFunction(() => {
+            this.disabled = false;
+            this.whoIsTheWinner();
+          });
+        this.updateProgress(this.linesToCode.length);
+        this.whichLineCounter++;
+        this.$refs.computerSideRef.robotCode();
+      }
+    },
+    debug() {
+      this.linesToCode.forEach((el, index) => {
+        const times = minMaxRandomNumber(2, 3);
+        for (let i = 0; i < times; i++) {
+          el = el.replace(",", "");
+        }
+        this.linesToCode[index] = el;
+        return el;
       });
-    updateProgress(linesToCode.length / 2);
-    whichLineCounter++;
-    whichLineCounter++;
-    computerSideRef.value.robotCode();
-  } else {
-    insertManyBugs(whichLineCounter);
-    typewriter
-      .callFunction(() => {
-        disabled.value = true;
-      })
-      .typeString(linesToCode[whichLineCounter])
 
-      .start()
-      .callFunction(() => {
-        disabled.value = false;
-        whoIsTheWinner();
-      });
-    updateProgress(linesToCode.length);
-    whichLineCounter++;
-    computerSideRef.value.robotCode();
-  }
-}
+      this.typewriter
+        .callFunction(() => {
+          this.disabled = true;
+        })
+        .deleteAll(1)
+        .typeString(
+          this.linesToCode.filter((_, i) => i < this.whichLineCounter).join("")
+        )
+        .start()
+        .callFunction(() => {
+          this.disabled = false;
 
-function debug() {
-  linesToCode.forEach((el, index) => {
-    const times = minMaxRandomNumber(2, 3);
-    for (let i = 0; i < times; i++) {
-      el = el.replace(",", "");
-    }
-    linesToCode[index] = el;
-    return el;
-  });
+          this.whoIsTheWinner();
+        });
 
-  typewriter
-    .callFunction(() => {
-      disabled.value = true;
-    })
-    .deleteAll(1)
-    .typeString(linesToCode.filter((_, i) => i < whichLineCounter).join(""))
-    .start()
-    .callFunction(() => {
-      disabled.value = false;
-      whoIsTheWinner();
+      this.numberOfBugs =
+        this.linesToCode
+          .filter((_, i) => i < this.whichLineCounter)
+          .join("")
+          .split(",").length - 1;
+      this.progressionRate =
+        (this.completionValue / this.linesToCode.length) *
+          this.whichLineCounter -
+        this.numberOfBugs;
+      this.bugsRate =
+        (this.completionValue / this.linesToCode.length) *
+        this.whichLineCounter;
+      this.$refs.computerSideRef.robotCode();
+    },
+  },
+  mounted() {
+    this.typewriter = new Typewriter(this.$refs.typewriterRef, {
+      delay: 1,
     });
-
-  numberOfBugs =
-    linesToCode
-      .filter((_, i) => i < whichLineCounter)
-      .join("")
-      .split(",").length - 1;
-  progressionRate.value =
-    (completionValue / linesToCode.length) * whichLineCounter - numberOfBugs;
-  bugsRate.value = (completionValue / linesToCode.length) * whichLineCounter;
-  computerSideRef.value.robotCode();
-}
-
-const rules = {
-  maxLength: (value) => value.length <= 20 || "Max 20 characters",
-  characters: (value) =>
-    !!(value || "").match(/^[a-zA-Z-()]*$/) || "Caractères non valides",
+    this.typewriter.changeDeleteSpeed(1);
+  },
+  components: {
+    ComputerSide,
+  },
 };
-
-function submit() {
-  if (
-    rules.maxLength(userInput.value) !== true ||
-    rules.characters(userInput.value) !== true
-  ) {
-    return;
-  }
-
-  if (userInput.value === "codeCarefully()") {
-    codeCarefully();
-  } else if (userInput.value === "codeQuickly()") {
-    codeQuickly();
-  } else if (userInput.value === "debug()") {
-    debug();
-  } else if (userInput.value === "reset()") {
-    reset();
-  } else {
-    alert("commande invalide");
-  }
-
-  userInput.value = "";
-}
 </script>
 
 <template>
@@ -350,9 +327,3 @@ function submit() {
     >
   </div>
 </template>
-
-<script>
-export default {
-  name: "InterfacePage",
-};
-</script>
