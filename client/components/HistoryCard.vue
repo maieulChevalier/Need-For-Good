@@ -4,10 +4,12 @@
       <span class="text-subtitle-2">{{
         new Date(this.date).toLocaleString("fr")
       }}</span>
-      <span v-if="userProgressionRate > computerProgressionRate">
+      <span v-if="userProgressionRate >= 100 && computerProgressionRate < 100">
         <strong>{{ "Victoire !" }}</strong>
       </span>
-      <span v-else-if="userProgressionRate < computerProgressionRate">
+      <span
+        v-else-if="userProgressionRate < 100 && computerProgressionRate >= 100"
+      >
         <strong>{{ "Défaite !" }}</strong>
       </span>
       <span v-else>
