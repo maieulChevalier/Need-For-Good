@@ -42,12 +42,21 @@ app.post("/api/user", async (req, res) => {
       .collation({ locale: "en", strength: 2 })
       .limit(1)
       .toArray();
-    if (users.length === 0) {
-      await usersCollection.insertOne({
-        userName: req.body.userName,
-        gamesHistory: [],
-      });
+
+    console.log("users: ", users);
+
+    try {
+      if (users.length === 0) {
+        const inserted = await usersCollection.insertOne({
+          userName: req.body.userName,
+          gamesHistory: [],
+        });
+        console.log("inserted: ", inserted);
+      }
+    } catch (error) {
+      console.log("Could not insert due to " + error);
     }
+
     res.send(req.body.userName);
   } catch (err) {
     console.log("error: ", err);
