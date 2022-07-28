@@ -26,7 +26,7 @@ export default {
       )
       .pauseFor(1000)
       .typeString(
-        "Pour ce faire, nous avons créé un jeu où il te faudra battre notre IA dans une compétition acharnée pour programmer une calculatrice. <br>"
+        "Pour ce faire, nous avons créé un jeu où il te faudra coder une calculatrice plus vite que notre IA.<br>"
       )
       .pauseFor(1000)
       .typeString("Mais Attention ! ")
@@ -46,16 +46,16 @@ export default {
       )
       .pauseFor(1000)
       .typeString(
-        "<u><strong>codeCarefully()</strong></u> : code aléatoirement une petite quantité avec peu de chances d'introduire des bugs <br>"
+        "<strong>La tortue 🐢</strong> : code aléatoirement une petite quantité avec peu de chances d'introduire des bugs <br>"
       )
       .pauseFor(1000)
       .typeString(
-        "<u><strong>codeQuickly()</strong></u>  : code aléatoirement une grande quantité avec beaucoup de chances d'introduire des bugs <br>"
+        "<strong>L'éclair ⚡</strong> : code aléatoirement une grande quantité avec beaucoup de chances d'introduire des bugs <br>"
       )
       .pauseFor(1000)
 
       .typeString(
-        "<u><strong>debug()</strong></u>  : supprime aléatoirement une certaine quantité de bugs <br>"
+        "<strong>Le bug 🪲</strong> : retire aléatoirement une certaine quantité de bugs <br>"
       )
       .pauseFor(1000)
 

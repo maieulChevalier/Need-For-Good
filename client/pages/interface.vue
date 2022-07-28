@@ -264,60 +264,50 @@ function submit() {
 
 <template>
   <div>
-    <v-container class="ma-1 d-flex justify-space-between">
-      <v-text-field
-        autofocus
-        label="Codes toi-même ici"
-        placeholder="ex: codeQuickly()"
-        outlined
-        style="max-width: 200px; margin-right: 20px"
-        hint="Appuies sur Entrée pour valider"
-        maxlength="20"
-        :rules="[rules.characters, rules.maxLength]"
-        v-model="userInput"
-        @keyup.enter="submit"
-        :disabled="disabled"
-      >
-      </v-text-field>
+    <v-container class="ma-1 d-flex justify-space-around flex-wrap">
       <v-btn
-        class="text-none"
+        class="ma-2"
+        fab
+        dark
         elevation="9"
-        x-large
         color="primary"
         @click="codeCarefully"
         :disabled="disabled"
       >
-        codeCarefully()
+        <v-icon dark>mdi-tortoise</v-icon>
       </v-btn>
       <v-btn
-        class="text-none"
+        class="ma-2"
+        fab
+        dark
         elevation="9"
-        x-large
         color="primary"
         @click="codeQuickly"
         :disabled="disabled"
       >
-        codeQuickly()
+        <v-icon dark>mdi-lightning-bolt</v-icon>
       </v-btn>
       <v-btn
-        class="text-none"
+        class="ma-2"
+        fab
+        dark
         elevation="9"
-        x-large
         color="primary"
         @click="debug"
         :disabled="disabled"
       >
-        debug()
+        <v-icon dark> mdi-bug-stop-outline </v-icon>
       </v-btn>
       <v-btn
-        class="text-none"
+        class="ma-2"
+        fab
+        dark
         elevation="9"
-        x-large
         color="primary"
         @click="reset"
         :disabled="disabled"
       >
-        reset()
+        <v-icon dark> mdi-restart </v-icon>
       </v-btn>
     </v-container>
 
