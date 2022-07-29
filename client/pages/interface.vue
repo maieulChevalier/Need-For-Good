@@ -14,7 +14,7 @@ export default {
   name: "InterfacePage",
   data() {
     return {
-      userName: "",
+      userName: this.$cookies.get("userName"),
       typewriter: undefined,
       linesToCode: [
         "function multiply() {<br>",
@@ -34,7 +34,6 @@ export default {
   },
   computed: {
     robotProgressionRate() {
-      console.log("hello");
       return this.$store.state.robotProgressionRate;
     },
   },
@@ -243,7 +242,7 @@ export default {
       delay: 1,
     });
     this.typewriter.changeDeleteSpeed(1);
-    if (localStorage.userName) this.userName = localStorage.userName;
+    console.log("userName: ", this.userName);
   },
   components: {
     ComputerSide,

@@ -1,6 +1,11 @@
-console.log("location: ", window.location.pathname);
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
 if (
-  localStorage.getItem("userName") === null &&
+  getCookie("userName") === undefined &&
   window.location.pathname !== "/login"
 ) {
   window.location.replace("/login");
@@ -8,7 +13,7 @@ if (
 
 export default async ({ app }) => {
   app.router.beforeEach((to, from, next) => {
-    if (to.name !== "login" && localStorage.getItem("userName") === null)
+    if (to.name !== "login" && app.$cookies.get("userName") === undefined)
       next({ name: "login" });
     else {
       next();

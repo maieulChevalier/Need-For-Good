@@ -28,7 +28,7 @@ export default {
           //   },
           // }
         )
-        .then(() => window.localStorage.setItem("userName", this.userInput))
+        .then(() => this.$cookies.set("userName", this.userInput))
         .then(() =>
           this.$router.push({
             path: "/",

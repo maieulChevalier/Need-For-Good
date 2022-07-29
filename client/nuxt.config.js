@@ -36,7 +36,7 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [],
+  modules: ["cookie-universal-nuxt"],
 
   env: {
     BASE_URL: process.env.BASE_URL || "http://localhost:3000",
