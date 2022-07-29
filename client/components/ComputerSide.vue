@@ -72,7 +72,7 @@ export default {
         stream
       ></v-progress-linear>
       <br />
-      <p><span ref="typewriterRef"></span></p>
+      <p>robotCode: <span ref="typewriterRef"></span></p>
     </v-container>
   </div>
 </template>

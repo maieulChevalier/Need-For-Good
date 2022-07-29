@@ -26,9 +26,11 @@ export default {
       ],
       whichLineCounter: 0,
       completionValue: 100,
-      progressionRate: 5,
-      numberOfBugs: 0,
-      bugsRate: 0,
+      validProgressionRate: 0,
+      numberOfNewBugs: 0,
+      totalNumberOfBugs: 0,
+      ProgressionWithBugsRate: 0,
+      bugsHistory: "",
       disabled: false,
     };
   },
@@ -44,6 +46,11 @@ export default {
       // `mapMutations` also supports payloads:
       "resetRobotProgressionRate", // map `this.incrementBy(amount)` to `this.$store.commit('incrementBy', amount)`
     ]),
+    recordBugsHistory(doesItAddBugs) {
+      this.bugsHistory = doesItAddBugs
+        ? this.bugsHistory.concat(` + ${this.numberOfNewBugs}`)
+        : this.bugsHistory.concat(` - ${this.numberOfNewBugs}`);
+    },
     separateString(str, n) {
       let arr = [];
       for (let i = 0; i < str.length; i += n) {
@@ -59,27 +66,35 @@ export default {
     insertSomeBugs(pos) {
       this.linesToCode[pos] = this.insertBugs(
         this.linesToCode[pos],
-        minMaxRandomNumber(2, 40)
+        minMaxRandomNumber(6, 30)
       );
     },
     insertManyBugs(pos) {
       this.linesToCode[pos] = this.insertBugs(
         this.linesToCode[pos],
-        minMaxRandomNumber(2, 10)
+        minMaxRandomNumber(2, 8)
       );
     },
-    updateProgress(totalLinesToComplete) {
-      if (this.whichLineCounter === 0) {
-        this.progressionRate = 0;
-      }
-      this.numberOfBugs =
-        this.linesToCode[this.whichLineCounter].split(",").length - 1;
-      this.progressionRate =
-        this.progressionRate +
-        this.completionValue / totalLinesToComplete -
-        this.numberOfBugs;
-      this.bugsRate =
-        this.bugsRate + this.completionValue / totalLinesToComplete;
+    increaseValidProgressionRate() {
+      this.validProgressionRate =
+        this.validProgressionRate +
+        this.completionValue / this.linesToCode.length -
+        this.numberOfNewBugs;
+    },
+    increaseProgressionWithBugsRate() {
+      this.ProgressionWithBugsRate =
+        this.ProgressionWithBugsRate +
+        this.completionValue / this.linesToCode.length;
+    },
+    updateNumberOfNewBugs(pos) {
+      this.numberOfNewBugs =
+        this.linesToCode
+          .slice(pos, pos + 1)
+          .join("")
+          .split(",").length - 1; // .split(",") .length - 1 gives the number of comas in the string
+    },
+    updateTotalNumberOfBugs(startingLine, endingLine) {
+      this.totalNumberOfBugs = this.totalNumberOfBugs + this.numberOfNewBugs;
     },
     multiply() {
       const a = prompt("Choisis un premier nombre.");
@@ -90,46 +105,45 @@ export default {
     },
     reset() {
       // this.whichLineCounter = 0;
-      // this.progressionRate = 5;
-      // this.bugsRate = 0;
+      // this.validProgressionRate = 5;
+      // this.ProgressionWithBugsRate = 0;
       // this.typewriter.deleteAll(1).start();
       // this.$refs.computerSideRef.robotReset();
       window.location.reload();
     },
     whoIsTheWinner() {
       if (
-        this.progressionRate >= this.completionValue ||
+        this.validProgressionRate >= this.completionValue ||
         this.robotProgressionRate >= this.completionValue
       ) {
         axios.post(`${process.env.BASE_URL}/user/games-history`, {
           userName: localStorage.getItem("userName"),
-          progressionRate: this.progressionRate,
+          progressionRate: this.validProgressionRate,
           computerProgressionRate: this.robotProgressionRate,
         });
       }
-
       if (
-        this.progressionRate >= this.completionValue &&
+        this.validProgressionRate >= this.completionValue &&
         this.robotProgressionRate < this.completionValue
       ) {
         alert("Bravoooo 🙌✊🥳🎉👏 Tu as gagné la compétition !");
         this.multiply();
         this.reset();
       } else if (
-        this.progressionRate < this.completionValue &&
+        this.validProgressionRate < this.completionValue &&
         this.robotProgressionRate >= this.completionValue
       ) {
         alert("Je t'ai batu ! 😋 Essaies de ne pas coder trop vite !");
         this.reset();
       } else if (
-        this.progressionRate >= this.completionValue &&
+        this.validProgressionRate >= this.completionValue &&
         this.robotProgressionRate >= this.completionValue
       ) {
         alert("Execo ! On recommence ?");
         this.reset();
       }
     },
-    codeCarefully() {
+    async codeCarefully() {
       if (this.whichLineCounter >= this.linesToCode.length) {
         alert(
           "Tu as fini d'écrire le programme mais il y a des bugs. Il faut debug() ton code! "
@@ -137,7 +151,7 @@ export default {
         return;
       }
       this.insertSomeBugs(this.whichLineCounter);
-      this.typewriter
+      await this.typewriter
         .callFunction(() => {
           this.disabled = true;
         })
@@ -149,7 +163,11 @@ export default {
           this.whoIsTheWinner();
         });
 
-      this.updateProgress(this.linesToCode.length);
+      this.updateNumberOfNewBugs(this.whichLineCounter);
+      this.updateTotalNumberOfBugs();
+      this.increaseValidProgressionRate();
+      this.increaseProgressionWithBugsRate();
+      this.recordBugsHistory(true);
       this.whichLineCounter++;
       this.$refs.computerSideRef.robotCode();
     },
@@ -158,7 +176,7 @@ export default {
         alert("Il faut débugger ton code!");
         return;
       }
-      if (this.whichLineCounter % 2 === this.linesToCode.length % 2) {
+      if (this.whichLineCounter < 5) {
         this.insertManyBugs(this.whichLineCounter);
         this.insertManyBugs(this.whichLineCounter + 1);
         this.typewriter
@@ -175,7 +193,16 @@ export default {
             this.disabled = false;
             this.whoIsTheWinner();
           });
-        this.updateProgress(this.linesToCode.length / 2);
+        this.updateNumberOfNewBugs(this.whichLineCounter);
+        this.updateTotalNumberOfBugs();
+        this.increaseValidProgressionRate();
+        this.increaseProgressionWithBugsRate();
+        this.recordBugsHistory(true);
+        this.updateNumberOfNewBugs(this.whichLineCounter + 1);
+        this.updateTotalNumberOfBugs();
+        this.increaseValidProgressionRate();
+        this.increaseProgressionWithBugsRate();
+        this.recordBugsHistory(true);
         this.whichLineCounter++;
         this.whichLineCounter++;
         this.$refs.computerSideRef.robotCode();
@@ -192,12 +219,17 @@ export default {
             this.disabled = false;
             this.whoIsTheWinner();
           });
-        this.updateProgress(this.linesToCode.length);
+        this.updateNumberOfNewBugs(this.whichLineCounter);
+        this.updateTotalNumberOfBugs();
+        this.increaseValidProgressionRate();
+        this.increaseProgressionWithBugsRate();
+        this.recordBugsHistory(true);
         this.whichLineCounter++;
         this.$refs.computerSideRef.robotCode();
       }
     },
     debug() {
+      const previousTotalNumberOfBugs = this.totalNumberOfBugs;
       this.linesToCode.forEach((el, index) => {
         const times = minMaxRandomNumber(2, 3);
         for (let i = 0; i < times; i++) {
@@ -222,16 +254,21 @@ export default {
           this.whoIsTheWinner();
         });
 
-      this.numberOfBugs =
+      this.totalNumberOfBugs =
         this.linesToCode
           .filter((_, i) => i < this.whichLineCounter)
           .join("")
           .split(",").length - 1;
-      this.progressionRate =
+
+      this.bugsHistory = this.bugsHistory.concat(
+        ` - ${previousTotalNumberOfBugs - this.totalNumberOfBugs}`
+      );
+
+      this.validProgressionRate =
         (this.completionValue / this.linesToCode.length) *
           this.whichLineCounter -
-        this.numberOfBugs;
-      this.bugsRate =
+        this.totalNumberOfBugs;
+      this.ProgressionWithBugsRate =
         (this.completionValue / this.linesToCode.length) *
         this.whichLineCounter;
       this.$refs.computerSideRef.robotCode();
@@ -311,12 +348,13 @@ export default {
           <v-progress-linear
             background-color="red lighten-2"
             color="green lighten-2"
-            v-model="progressionRate"
-            :buffer-value="bugsRate"
+            v-model="validProgressionRate"
+            :buffer-value="ProgressionWithBugsRate"
             stream
           ></v-progress-linear>
           <br />
-          <p><span ref="typewriterRef"></span></p>
+          <p>Code: <span ref="typewriterRef"></span></p>
+          <p>{{ `Bugs: ${bugsHistory} ` }}</p>
         </v-container>
       </v-col>
       <v-divider vertical color="white"></v-divider>
