@@ -1,6 +1,7 @@
 <script>
+import { mapMutations } from "vuex";
+
 import Typewriter from "typewriter-effect/dist/core";
-import { robotProgressionRate } from "../customStore/customStore.js";
 
 export default {
   name: "ComputerSide",
@@ -20,24 +21,30 @@ export default {
         "robotMultiplication();",
       ],
       whichLineCounter: 0,
-      robotProgressionRate,
     };
   },
-  methods: {
-    updateProgress(totalLinesToComplete) {
-      this.robotProgressionRate.value =
-        this.robotProgressionRate.value + 100 / totalLinesToComplete;
+  computed: {
+    robotProgressionRate() {
+      return this.$store.state.robotProgressionRate;
     },
+  },
+  methods: {
+    ...mapMutations([
+      "increaseRobotProgressionRate", // map `this.increment()` to `this.$store.commit('increment')`
+
+      // `mapMutations` also supports payloads:
+      "resetRobotProgressionRate", // map `this.incrementBy(amount)` to `this.$store.commit('incrementBy', amount)`
+    ]),
     robotCode() {
       this.typewriter
         .typeString(this.linesToCode[this.whichLineCounter])
         .start();
-      this.updateProgress(this.linesToCode.length);
+      this.increaseRobotProgressionRate(this.linesToCode.length);
       this.whichLineCounter++;
     },
     robotReset() {
       this.whichLineCounter = 0;
-      this.robotProgressionRate.value = 5;
+      this.resetRobotProgressionRate();
       this.typewriter.deleteAll(1).start();
     },
   },
@@ -60,7 +67,7 @@ export default {
       </v-container>
       <v-progress-linear
         color="green lighten-2"
-        v-model="robotProgressionRate.value"
+        v-model="robotProgressionRate"
         :buffer-value="0"
         stream
       ></v-progress-linear>

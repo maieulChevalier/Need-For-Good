@@ -1,11 +1,13 @@
 <script>
 // Ajouter couleurs au code "écrit" par l'utilisateur et l'IA
 // Intégrer vuex
+
+import { mapMutations } from "vuex";
+
 import Typewriter from "typewriter-effect/dist/core";
 import axios from "axios";
 
 import ComputerSide from "../components/ComputerSide.vue";
-import { robotProgressionRate } from "../customStore/customStore";
 import { minMaxRandomNumber } from "../helpers/minMaxRandomNumber";
 
 export default {
@@ -25,13 +27,24 @@ export default {
       whichLineCounter: 0,
       completionValue: 100,
       progressionRate: 5,
-      robotProgressionRate,
       numberOfBugs: 0,
       bugsRate: 0,
       disabled: false,
     };
   },
+  computed: {
+    robotProgressionRate() {
+      console.log("hello");
+      return this.$store.state.robotProgressionRate;
+    },
+  },
   methods: {
+    ...mapMutations([
+      "increaseRobotProgressionRate", // map `this.increment()` to `this.$store.commit('increment')`
+
+      // `mapMutations` also supports payloads:
+      "resetRobotProgressionRate", // map `this.incrementBy(amount)` to `this.$store.commit('incrementBy', amount)`
+    ]),
     separateString(str, n) {
       let arr = [];
       for (let i = 0; i < str.length; i += n) {
@@ -87,31 +100,31 @@ export default {
     whoIsTheWinner() {
       if (
         this.progressionRate >= this.completionValue ||
-        this.robotProgressionRate.value >= this.completionValue
+        this.robotProgressionRate >= this.completionValue
       ) {
         axios.post(`${process.env.BASE_URL}/user/games-history`, {
           userName: localStorage.getItem("userName"),
           progressionRate: this.progressionRate,
-          computerProgressionRate: this.robotProgressionRate.value,
+          computerProgressionRate: this.robotProgressionRate,
         });
       }
 
       if (
         this.progressionRate >= this.completionValue &&
-        this.robotProgressionRate.value < this.completionValue
+        this.robotProgressionRate < this.completionValue
       ) {
         alert("Bravoooo 🙌✊🥳🎉👏 Tu as gagné la compétition !");
         this.multiply();
         this.reset();
       } else if (
         this.progressionRate < this.completionValue &&
-        this.robotProgressionRate.value >= this.completionValue
+        this.robotProgressionRate >= this.completionValue
       ) {
         alert("Je t'ai batu ! 😋 Essaies de ne pas coder trop vite !");
         this.reset();
       } else if (
         this.progressionRate >= this.completionValue &&
-        this.robotProgressionRate.value >= this.completionValue
+        this.robotProgressionRate >= this.completionValue
       ) {
         alert("Execo ! On recommence ?");
         this.reset();
