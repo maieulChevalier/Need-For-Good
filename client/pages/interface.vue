@@ -117,7 +117,7 @@ export default {
         this.robotProgressionRate >= this.completionValue
       ) {
         axios.post(`${process.env.BASE_URL}/user/games-history`, {
-          userName: localStorage.getItem("userName"),
+          userName: this.$cookies.get("userName"),
           progressionRate: this.validProgressionRate,
           computerProgressionRate: this.robotProgressionRate,
         });

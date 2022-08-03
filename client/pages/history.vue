@@ -16,7 +16,7 @@ export default {
       .get(
         `${
           process.env.BASE_URL
-        }/user/games-history?userName=${localStorage.getItem("userName")}`
+        }/user/games-history?userName=${this.$cookies.get("userName")}`
       )
       .then((user) => {
         this.gamesHistory = user.data.gamesHistory;
